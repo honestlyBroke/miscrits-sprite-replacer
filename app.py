@@ -258,29 +258,52 @@ elif st.session_state["step"] == 3:
             st.caption(f"Size: {orig_w}x{orig_h}px")
 
     with col_right:
-        st.subheader("Replacement")
-        with st.container(border=True):
-            if new_file:
-                # Process immediate
-                save_path = workdir / f"{full_name}.replacement.png"
-                with open(save_path, "wb") as f:
-                    f.write(new_file.getbuffer())
-                
-                # Resize
-                img = Image.open(save_path).convert("RGBA")
-                img_resized = img.resize((orig_w, orig_h), Image.LANCZOS)
-                
-                resized_save_path = workdir / f"{full_name}.resized.png"
-                img_resized.save(resized_save_path)
-                st.session_state["resized_path"] = str(resized_save_path)
-                
-                st.image(img_resized, width='stretch')
-                st.caption(f"Resized to: {orig_w}x{orig_h}px")
-            else:
-                st.info("Waiting for upload...")
-                # Placeholder to keep grid aligned
-                st.image("https://placehold.co/200x200?text=Preview", width='stretch')
+            st.subheader("Replacement")
+            with st.container(border=True):
+                if new_file:
+                    # Process immediate
+                    save_path = workdir / f"{full_name}.replacement.png"
+                    with open(save_path, "wb") as f:
+                        f.write(new_file.getbuffer())
+                    
+                    # --- NEW RESIZE LOGIC START ---
+                    st.markdown("#### 📏 Size Controls")
+                    scale_factor = st.slider(
+                        "Size Multiplier", 
+                        min_value=0.5, 
+                        max_value=2.0, 
+                        value=1.0, 
+                        step=0.1,
+                        help="1.0 = Original height. 2.0 = Double size."
+                    )
+                    keep_aspect = st.checkbox("Keep Landscape Shape?", value=True, help="If checked, we only match the height and let the width be whatever it needs to be.")
 
+                    img = Image.open(save_path).convert("RGBA")
+                    
+                    # Calculate new dimensions
+                    if keep_aspect:
+                        # Logic: Match the Original Height * Scale, and calculate Width automatically
+                        aspect_ratio = img.width / img.height
+                        target_h = int(orig_h * scale_factor)
+                        target_w = int(target_h * aspect_ratio)
+                    else:
+                        # Logic: Stretch both dimensions based on Original * Scale
+                        target_w = int(orig_w * scale_factor)
+                        target_h = int(orig_h * scale_factor)
+
+                    img_resized = img.resize((target_w, target_h), Image.LANCZOS)
+                    # --- NEW RESIZE LOGIC END ---
+
+                    resized_save_path = workdir / f"{full_name}.resized.png"
+                    img_resized.save(resized_save_path)
+                    st.session_state["resized_path"] = str(resized_save_path)
+                    
+                    st.image(img_resized, width='stretch')
+                    st.caption(f"Final Size: {target_w}x{target_h}px (Original: {orig_w}x{orig_h})")
+                else:
+                    st.info("Waiting for upload...")
+                    # Placeholder to keep grid aligned
+                    st.image("https://placehold.co/200x200?text=Preview", width='stretch')
     st.divider()
 
     # Action Buttons
@@ -316,8 +339,6 @@ elif st.session_state["step"] == 4:
                 st.code(res.stderr)
                 st.stop()
 
-    # Success UI
-    st.balloons()
     
     with open(patched_path, "rb") as f:
         file_data = f.read()
@@ -336,8 +357,24 @@ elif st.session_state["step"] == 4:
     
     st.divider()
     if st.button("🔄 Start Over (Edit another sprite)"):
-        st.session_state["step"] = 2 
+        # --- DELETE ALL CACHED FILES ---
+        import shutil
+        workdir = Path(st.session_state["workdir"])
+        shutil.rmtree(workdir, ignore_errors=True)
+
+        # Re-create empty cache directory
+        new_dir = tempfile.mkdtemp(prefix="miscrits_sprites_")
+        st.session_state["workdir"] = new_dir
+
+        # Reset any cached paths
+        st.session_state["resized_path"] = None
+        st.session_state["selected_idx"] = None
+        st.session_state["decoded_sprites_meta"] = []
+
+        # Jump back to sprite-selection step
+        st.session_state["step"] = 2
         st.rerun()
+
 
 # --- Final info ------------------------------------------------------------
 st.info(
