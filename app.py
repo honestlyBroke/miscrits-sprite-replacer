@@ -109,6 +109,8 @@ with st.sidebar:
         "3. Upload encrypted files.\n"
         "4. Swap art & download."
     )
+    st.markdown("## 🎥 Tutorial Video")
+    st.video("assets/spriteguide-real-2.mp4")
     
     if st.button("🔄 Reset All", type="secondary"):
         for key in list(st.session_state.keys()):
@@ -281,15 +283,19 @@ elif st.session_state["step"] == 3:
                     img = Image.open(save_path).convert("RGBA")
                     
                     # Calculate new dimensions
-                    if keep_aspect:
-                        # Logic: Match the Original Height * Scale, and calculate Width automatically
-                        aspect_ratio = img.width / img.height
-                        target_h = int(orig_h * scale_factor)
-                        target_w = int(target_h * aspect_ratio)
+                    if orig_w == 50 and orig_h == 50:
+                        # Force 50x50 if decrypted/original sprite was 50x50
+                        target_w, target_h = 50, 50
                     else:
-                        # Logic: Stretch both dimensions based on Original * Scale
-                        target_w = int(orig_w * scale_factor)
-                        target_h = int(orig_h * scale_factor)
+                        if keep_aspect:
+                            # Logic: Match the Original Height * Scale, and calculate Width automatically
+                            aspect_ratio = img.width / img.height
+                            target_h = int(orig_h * scale_factor)
+                            target_w = int(target_h * aspect_ratio)
+                        else:
+                            # Logic: Stretch both dimensions based on Original * Scale
+                            target_w = int(orig_w * scale_factor)
+                            target_h = int(orig_h * scale_factor)
 
                     img_resized = img.resize((target_w, target_h), Image.LANCZOS)
                     # --- NEW RESIZE LOGIC END ---
