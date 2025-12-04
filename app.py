@@ -229,6 +229,22 @@ elif st.session_state["step"] == 2:
                     st.rerun()
 
     if st.button("⬅️ Back to Upload"):
+        import shutil
+
+        # Delete the whole working directory (all encrypted + decoded files)
+        workdir = Path(st.session_state["workdir"])
+        shutil.rmtree(workdir, ignore_errors=True)
+
+        # Create a fresh empty workdir
+        new_dir = tempfile.mkdtemp(prefix="miscrits_sprites_")
+        st.session_state["workdir"] = new_dir
+
+        # Reset all sprite-related state
+        st.session_state["decoded_sprites_meta"] = []
+        st.session_state["selected_idx"] = None
+        st.session_state["resized_path"] = None
+
+        # Go back to upload step
         st.session_state["step"] = 1
         st.rerun()
 
@@ -363,23 +379,37 @@ elif st.session_state["step"] == 4:
     
     st.divider()
     if st.button("🔄 Start Over (Edit another sprite)"):
-        # --- DELETE ALL CACHED FILES ---
-        import shutil
+        # --- DELETE ONLY RE-ENCRYPTED / TEMP OUTPUT FILES ---
         workdir = Path(st.session_state["workdir"])
-        shutil.rmtree(workdir, ignore_errors=True)
 
-        # Re-create empty cache directory
-        new_dir = tempfile.mkdtemp(prefix="miscrits_sprites_")
-        st.session_state["workdir"] = new_dir
+        # Remove any patched (re-encrypted) files so we don't accidentally reuse them
+        for f in workdir.glob("*.patched"):
+            try:
+                f.unlink()
+            except FileNotFoundError:
+                pass
 
-        # Reset any cached paths
+        # Optional but tidy: remove per-edit temp images
+        for f in workdir.glob("*.replacement.png"):
+            try:
+                f.unlink()
+            except FileNotFoundError:
+                pass
+
+        for f in workdir.glob("*.resized.png"):
+            try:
+                f.unlink()
+            except FileNotFoundError:
+                pass
+
+        # Reset per-edit state, but KEEP decoded_sprites_meta
         st.session_state["resized_path"] = None
         st.session_state["selected_idx"] = None
-        st.session_state["decoded_sprites_meta"] = []
 
-        # Jump back to sprite-selection step
+        # Jump back to sprite-selection step, using the same decoded sprites
         st.session_state["step"] = 2
         st.rerun()
+
 
 
 # --- Final info ------------------------------------------------------------
