@@ -12,6 +12,86 @@ import streamlit as st
 from PIL import Image
 
 # =====================================================================
+# Custom CSS Styling
+# =====================================================================
+MISCRITS_CSS = """
+<style>
+/* Make the whole app feel less “boxy” */
+main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Card-like containers */
+div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div {
+    border-radius: 16px;
+}
+
+/* Buttons: pill style with golden fill */
+.stButton button {
+    border-radius: 999px;
+    border: 2px solid #FFC842;
+    background: #FFC842;
+    color: #2A1C0E;
+    font-weight: 700;
+}
+
+/* Small pill buttons (e.g. filters) look better slightly smaller */
+.stButton > button:hover:not(:disabled) {
+    background-color: #FFD451;      /* slightly lighter gold */
+    color: #2A1C0E;
+    border-color: #FFC842;
+}
+
+
+/* Chips / badge-like labels can use markdown with this class if you want */
+.miscrit-chip {
+    display: inline-block;
+    padding: 0.15rem 0.75rem;
+    border-radius: 999px;
+    background: #2A1C0E;
+    color: #FFE7AA;
+    border: 1px solid #FFC842;
+    font-size: 0.8rem;
+}
+
+/* === Sidebar "How this tool works" box === */
+.sidebar-box {
+    background: #1D1510;        /* dark card background */
+    border: 2px solid #FFC842;  /* gold border */
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    color: #FFE7AA;
+}
+.sidebar-box h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: #FFC842;
+    font-weight: 700;
+}
+.sidebar-box ol {
+    padding-left: 1.25rem;
+}
+.sidebar-box li {
+    margin-bottom: 0.35rem;
+}
+/* Wider sidebar (Miscripedia-style) */
+section[data-testid="stSidebar"] {
+    width: 500px !important;      /* adjust this value to taste */
+    min-width: 500px !important;
+}
+
+/* Make main area account for wider sidebar on large screens */
+@media (min-width: 1024px) {
+    main.block-container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+</style>
+"""
+
+# =====================================================================
 # Paths & Config
 # =====================================================================
 
@@ -36,6 +116,8 @@ st.set_page_config(
 # =====================================================================
 # Styling & Helpers
 # =====================================================================
+
+st.markdown(MISCRITS_CSS, unsafe_allow_html=True)
 
 def local_css():
     st.markdown(
@@ -181,18 +263,19 @@ def show_pil_via_file(
     filename: str,
     *,
     caption: str | None = None,
-    use_container_width: bool = False,
+    width: str = "stretch",  # "stretch" or "content"
 ) -> None:
-    """Save a PIL image to the workdir and display it via file path.
-
-    This avoids Streamlit's in-memory media store, which is what causes
-    the 'Missing file <hex>.png' MediaFileStorageError spam.
-    """
+    """Save a PIL image to the workdir and display it via file path."""
     workdir = Path(st.session_state.get("workdir", tempfile.gettempdir()))
     workdir.mkdir(parents=True, exist_ok=True)
     path = workdir / filename
     img.save(path)
-    st.image(str(path), caption=caption, use_container_width=use_container_width)
+    st.image(
+        str(path),
+        caption=caption,
+        width=width,
+    )
+
 
 
 # =====================================================================
@@ -226,14 +309,21 @@ workdir = Path(st.session_state["workdir"])
 
 with st.sidebar:
     st.title("🎮 Sprite Replacer")
-
-    st.info(
-        "**How this tool works:**\n"
-        "1. Pick a Miscrit from the Miscrits grid.\n"
-        "2. Choose whether you want to replace the **Sprite** or the **Avatar**.\n"
-        "3. Upload your replacement image and resize it if needed.\n"
-        "4. Download the encrypted cache file.\n"
-        "5. Drop that file into the correct folder and overwrite the existing file."
+    
+    st.markdown(
+        """
+        <div class="sidebar-box">
+            <h3>How this tool works:</h3>
+            <ol>
+                <li>Pick a Miscrit from the Miscrits grid.</li>
+                <li>Choose whether you want to replace the <b>Sprite</b> or the <b>Avatar</b>.</li>
+                <li>Upload your replacement image and resize it if needed.</li>
+                <li>Download the encrypted cache file.</li>
+                <li>Drop that file into the correct folder and overwrite the existing file.</li>
+            </ol>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     st.markdown("### 📁 Where to put the file")
@@ -391,7 +481,7 @@ if st.session_state["step"] == 1:
                     show_pil_via_file(
                         sprite_img,
                         f"grid_{m['id']}.png",
-                        use_container_width=True,
+                        width="stretch",
                     )
 
                     # Meta row
@@ -596,7 +686,7 @@ elif st.session_state["step"] == 2:
                 show_pil_via_file(
                     preview_canvas,
                     "preview_avatar.png",
-                    use_container_width=True,
+                    width="stretch",
                 )
             else:
                 show_pil_via_file(
@@ -606,7 +696,7 @@ elif st.session_state["step"] == 2:
                         f"Final size: {target_w}×{target_h}px "
                         f"(original: {orig_w}×{orig_h}px)"
                     ),
-                    use_container_width=True,
+                    width="stretch",
                 )
 
 
