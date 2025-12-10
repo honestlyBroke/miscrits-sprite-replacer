@@ -1,0 +1,2095 @@
+[
+  {
+    "id": 1,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Flue",
+    "final_name": "Afterburn"
+  },
+  {
+    "id": 2,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Flowerpiller",
+    "final_name": "Fairyblossom"
+  },
+  {
+    "id": 3,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Prawnja",
+    "final_name": "Clawmurai"
+  },
+  {
+    "id": 4,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Weevern",
+    "final_name": "Serpasoar"
+  },
+  {
+    "id": 5,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Cubsprout",
+    "final_name": "Bloomane"
+  },
+  {
+    "id": 6,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Sparkupine",
+    "final_name": "Wiquill"
+  },
+  {
+    "id": 7,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Hydroseal",
+    "final_name": "Squalrus"
+  },
+  {
+    "id": 8,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Snortus",
+    "final_name": "Coraswine"
+  },
+  {
+    "id": 9,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Quirk",
+    "final_name": "Subterhuge"
+  },
+  {
+    "id": 10,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Flameling",
+    "final_name": "Infernus"
+  },
+  {
+    "id": 11,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Lumera",
+    "final_name": "Anublaze"
+  },
+  {
+    "id": 12,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Snatcher",
+    "final_name": "Snapdragon"
+  },
+  {
+    "id": 13,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Elefauna",
+    "final_name": "Grastodon"
+  },
+  {
+    "id": 14,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Nessy",
+    "final_name": "Aquine"
+  },
+  {
+    "id": 15,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Hotfoot",
+    "final_name": "Kang Fu"
+  },
+  {
+    "id": 16,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Twiggum",
+    "final_name": "Willoak"
+  },
+  {
+    "id": 17,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Shellbee",
+    "final_name": "Kalamos"
+  },
+  {
+    "id": 18,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Squibee",
+    "final_name": "Krakenhook"
+  },
+  {
+    "id": 19,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Steamguin",
+    "final_name": "Aukamotive"
+  },
+  {
+    "id": 20,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Waddles",
+    "final_name": "Mallardon"
+  },
+  {
+    "id": 21,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Treemur",
+    "final_name": "Monfiki"
+  },
+  {
+    "id": 22,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Tulipinny",
+    "final_name": "Ongabonga"
+  },
+  {
+    "id": 23,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Dark Flue",
+    "final_name": "Dark Afterburn"
+  },
+  {
+    "id": 24,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Dark Flowerpiller",
+    "final_name": "Dark Fairyblossom"
+  },
+  {
+    "id": 25,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Dark Prawnja",
+    "final_name": "Dark Clawmurai"
+  },
+  {
+    "id": 26,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Blazebit",
+    "final_name": "Eruptacus"
+  },
+  {
+    "id": 27,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Frostmite",
+    "final_name": "Abomino"
+  },
+  {
+    "id": 28,
+    "element": "Fire",
+    "rarity": "Epic",
+    "first_name": "Blazertooth",
+    "final_name": "Minotorch"
+  },
+  {
+    "id": 29,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Statikat",
+    "final_name": "Panthundra"
+  },
+  {
+    "id": 30,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Equestrion",
+    "final_name": "Sagittarion"
+  },
+  {
+    "id": 31,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Drilldent",
+    "final_name": "Demolasher"
+  },
+  {
+    "id": 32,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Kiloray",
+    "final_name": "Edison Ray"
+  },
+  {
+    "id": 33,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Breezycheeks",
+    "final_name": "Glidengale"
+  },
+  {
+    "id": 34,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Mumbah",
+    "final_name": "Sphynxus"
+  },
+  {
+    "id": 35,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Aria",
+    "final_name": "Wyndasia"
+  },
+  {
+    "id": 36,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Jellyshock",
+    "final_name": "Medustung"
+  },
+  {
+    "id": 37,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Croaky",
+    "final_name": "Geotoad"
+  },
+  {
+    "id": 38,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Sparkslug",
+    "final_name": "Buzzcargo"
+  },
+  {
+    "id": 39,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Craggy",
+    "final_name": "Mineram"
+  },
+  {
+    "id": 40,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Owlie",
+    "final_name": "Hootray"
+  },
+  {
+    "id": 41,
+    "element": "Lightning",
+    "rarity": "Rare",
+    "first_name": "Luna",
+    "final_name": "Antennious"
+  },
+  {
+    "id": 42,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Poltergust",
+    "final_name": "Zephyrgeist"
+  },
+  {
+    "id": 43,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Fossillia",
+    "final_name": "Primordius"
+  },
+  {
+    "id": 44,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Eggy",
+    "final_name": "Rocklodon"
+  },
+  {
+    "id": 45,
+    "element": "Lightning",
+    "rarity": "Rare",
+    "first_name": "Thundercracker",
+    "final_name": "Clobberilla"
+  },
+  {
+    "id": 46,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Mun Kee",
+    "final_name": "Hanuphoon"
+  },
+  {
+    "id": 47,
+    "element": "Lightning",
+    "rarity": "Epic",
+    "first_name": "Microblast",
+    "final_name": "Zapire"
+  },
+  {
+    "id": 48,
+    "element": "Earth",
+    "rarity": "Epic",
+    "first_name": "Sledgehog",
+    "final_name": "Stalagfright"
+  },
+  {
+    "id": 49,
+    "element": "Earth",
+    "rarity": "Epic",
+    "first_name": "Sapphron",
+    "final_name": "Scorpionyx"
+  },
+  {
+    "id": 50,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Sparkspeck",
+    "final_name": "Glitterglint"
+  },
+  {
+    "id": 51,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Grubbean",
+    "final_name": "Thornaxis"
+  },
+  {
+    "id": 52,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Echino",
+    "final_name": "Warro"
+  },
+  {
+    "id": 53,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Wavesling",
+    "final_name": "Nessilisk"
+  },
+  {
+    "id": 54,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Sparkitten",
+    "final_name": "Cheetorch"
+  },
+  {
+    "id": 55,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Arigato",
+    "final_name": "Dynamellow"
+  },
+  {
+    "id": 56,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Jack",
+    "final_name": "Tuzee"
+  },
+  {
+    "id": 57,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Quebble",
+    "final_name": "Quarriock"
+  },
+  {
+    "id": 58,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Digsy",
+    "final_name": "Excavior"
+  },
+  {
+    "id": 59,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Hippoke",
+    "final_name": "Triceratron"
+  },
+  {
+    "id": 60,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Leggy",
+    "final_name": "Ostral"
+  },
+  {
+    "id": 61,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Orcatide",
+    "final_name": "Hydroslam"
+  },
+  {
+    "id": 62,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Flutterpat",
+    "final_name": "Gazaereal"
+  },
+  {
+    "id": 63,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Snorkels",
+    "final_name": "Leviafin"
+  },
+  {
+    "id": 64,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Kelpa",
+    "final_name": "Derelicro"
+  },
+  {
+    "id": 65,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Ignios",
+    "final_name": "Preliator"
+  },
+  {
+    "id": 67,
+    "element": "Lightning",
+    "rarity": "Epic",
+    "first_name": "Beelzebug",
+    "final_name": "Zzzap"
+  },
+  {
+    "id": 68,
+    "element": "Wind",
+    "rarity": "Epic",
+    "first_name": "Winnebeargo",
+    "final_name": "Minninnewah"
+  },
+  {
+    "id": 69,
+    "element": "Earth",
+    "rarity": "Epic",
+    "first_name": "Fennie",
+    "final_name": "Dustelle"
+  },
+  {
+    "id": 70,
+    "element": "Nature",
+    "rarity": "Exotic",
+    "first_name": "Patchkin",
+    "final_name": "Reaping Gourd"
+  },
+  {
+    "id": 72,
+    "element": "Water",
+    "rarity": "Exotic",
+    "first_name": "Flurrious",
+    "final_name": "Clawsickle"
+  },
+  {
+    "id": 73,
+    "element": "Wind",
+    "rarity": "Epic",
+    "first_name": "Fangly",
+    "final_name": "Tuskalate"
+  },
+  {
+    "id": 74,
+    "element": "Lightning",
+    "rarity": "Rare",
+    "first_name": "Dark Kiloray",
+    "final_name": "Dark Edison Ray"
+  },
+  {
+    "id": 75,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Dark Croaky",
+    "final_name": "Dark Geotoad"
+  },
+  {
+    "id": 76,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Valentino",
+    "final_name": "Rebound"
+  },
+  {
+    "id": 77,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Dark Cubsprout",
+    "final_name": "Dark Bloomane"
+  },
+  {
+    "id": 78,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Dark Sparkitten",
+    "final_name": "Dark Cheetorch"
+  },
+  {
+    "id": 79,
+    "element": "Water",
+    "rarity": "Epic",
+    "first_name": "Dark Snortus",
+    "final_name": "Dark Coraswine"
+  },
+  {
+    "id": 80,
+    "element": "Lightning",
+    "rarity": "Epic",
+    "first_name": "Boltzee",
+    "final_name": "Violimp"
+  },
+  {
+    "id": 82,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Dark Owlie",
+    "final_name": "Dark Hootray"
+  },
+  {
+    "id": 83,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Dark Echino",
+    "final_name": "Dark Warro"
+  },
+  {
+    "id": 85,
+    "element": "Lightning",
+    "rarity": "Rare",
+    "first_name": "Dark Arigato",
+    "final_name": "Dark Dynamellow"
+  },
+  {
+    "id": 86,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Dark Hydroseal",
+    "final_name": "Dark Squalrus"
+  },
+  {
+    "id": 87,
+    "element": "Wind",
+    "rarity": "Exotic",
+    "first_name": "Peepsie",
+    "final_name": "Cheepers"
+  },
+  {
+    "id": 88,
+    "element": "Earth",
+    "rarity": "Epic",
+    "first_name": "Dark Eggy",
+    "final_name": "Dark Rocklodon"
+  },
+  {
+    "id": 90,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Dark Flameling",
+    "final_name": "Dark Infernus"
+  },
+  {
+    "id": 91,
+    "element": "Nature",
+    "rarity": "Epic",
+    "first_name": "Dark Elefauna",
+    "final_name": "Dark Grastodon"
+  },
+  {
+    "id": 93,
+    "element": "Nature",
+    "rarity": "Exotic",
+    "first_name": "Mama",
+    "final_name": "Genesis"
+  },
+  {
+    "id": 94,
+    "element": "Water",
+    "rarity": "Exotic",
+    "first_name": "Dark Nessy",
+    "final_name": "Dark Aquine"
+  },
+  {
+    "id": 95,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Dark Hotfoot",
+    "final_name": "Dark Kang Fu"
+  },
+  {
+    "id": 97,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Dark Breezycheeks",
+    "final_name": "Dark Glidengale"
+  },
+  {
+    "id": 98,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Papa",
+    "final_name": "Zeusicus"
+  },
+  {
+    "id": 101,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Whik",
+    "final_name": "Vesuvion"
+  },
+  {
+    "id": 102,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Slithero",
+    "final_name": "Incineron"
+  },
+  {
+    "id": 104,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Spinnerette",
+    "final_name": "Gigantula"
+  },
+  {
+    "id": 108,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Crickin",
+    "final_name": "Praze"
+  },
+  {
+    "id": 111,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Bubbles",
+    "final_name": "Popiller"
+  },
+  {
+    "id": 112,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Humbug",
+    "final_name": "Aviona"
+  },
+  {
+    "id": 115,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Lavarilla",
+    "final_name": "Obsidiape"
+  },
+  {
+    "id": 121,
+    "element": "Nature",
+    "rarity": "Epic",
+    "first_name": "Bloomple",
+    "final_name": "Miraca"
+  },
+  {
+    "id": 124,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Pamboo",
+    "final_name": "Pixiuma"
+  },
+  {
+    "id": 125,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Rockodile",
+    "final_name": "Growliath"
+  },
+  {
+    "id": 133,
+    "element": "Wind",
+    "rarity": "Epic",
+    "first_name": "Boneshee",
+    "final_name": "Osteowraith"
+  },
+  {
+    "id": 134,
+    "element": "Water",
+    "rarity": "Epic",
+    "first_name": "Ursiwave",
+    "final_name": "Ripcurlio"
+  },
+  {
+    "id": 135,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Bludger",
+    "final_name": "Convincer"
+  },
+  {
+    "id": 138,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Zaptor",
+    "final_name": "Tesladon"
+  },
+  {
+    "id": 139,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Narlope",
+    "final_name": "Majestrike"
+  },
+  {
+    "id": 142,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Vexie",
+    "final_name": "Alionyx"
+  },
+  {
+    "id": 144,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Tongutail",
+    "final_name": "Bifurcrystal"
+  },
+  {
+    "id": 151,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Hawkai",
+    "final_name": "Hawkogan"
+  },
+  {
+    "id": 152,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Nero",
+    "final_name": "Napoleon"
+  },
+  {
+    "id": 155,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Pollifog",
+    "final_name": "Kinginrin"
+  },
+  {
+    "id": 156,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Felis",
+    "final_name": "Chiroptera"
+  },
+  {
+    "id": 158,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Tectonyx",
+    "final_name": "Valrog"
+  },
+  {
+    "id": 168,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Nibbles",
+    "final_name": "Coyver"
+  },
+  {
+    "id": 171,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Skustunk",
+    "final_name": "Sulfurious"
+  },
+  {
+    "id": 176,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Flintly",
+    "final_name": "Napalm"
+  },
+  {
+    "id": 180,
+    "element": "Earth",
+    "rarity": "Epic",
+    "first_name": "Gog",
+    "final_name": "Primordion"
+  },
+  {
+    "id": 184,
+    "element": "Wind",
+    "rarity": "Epic",
+    "first_name": "Octavio",
+    "final_name": "Dischord"
+  },
+  {
+    "id": 192,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Crabbles",
+    "final_name": "Stabbles"
+  },
+  {
+    "id": 196,
+    "element": "Fire",
+    "rarity": "Epic",
+    "first_name": "Inferno",
+    "final_name": "Dozer"
+  },
+  {
+    "id": 197,
+    "element": "Fire",
+    "rarity": "Epic",
+    "first_name": "Hotdog",
+    "final_name": "Magmutt"
+  },
+  {
+    "id": 200,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Rafiery",
+    "final_name": "Stomprage"
+  },
+  {
+    "id": 201,
+    "element": "WaterWind",
+    "rarity": "Epic",
+    "first_name": "Nanaslug",
+    "final_name": "Tornadouse"
+  },
+  {
+    "id": 202,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Vhisp",
+    "final_name": "Fangale"
+  },
+  {
+    "id": 203,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Raldio",
+    "final_name": "Verdauntless"
+  },
+  {
+    "id": 205,
+    "element": "FireWind",
+    "rarity": "Exotic",
+    "first_name": "Freedom",
+    "final_name": "Patriot"
+  },
+  {
+    "id": 206,
+    "element": "Earth",
+    "rarity": "Epic",
+    "first_name": "Gemix",
+    "final_name": "Ferocilux"
+  },
+  {
+    "id": 210,
+    "element": "Lightning",
+    "rarity": "Epic",
+    "first_name": "Podo",
+    "final_name": "Tikki"
+  },
+  {
+    "id": 212,
+    "element": "Fire",
+    "rarity": "Epic",
+    "first_name": "Lavazard",
+    "final_name": "Flamydosaurus"
+  },
+  {
+    "id": 214,
+    "element": "FireWind",
+    "rarity": "Epic",
+    "first_name": "Shurikoon",
+    "final_name": "Ninjat"
+  },
+  {
+    "id": 223,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Skelepup",
+    "final_name": "Frankensnarl"
+  },
+  {
+    "id": 226,
+    "element": "Water",
+    "rarity": "Exotic",
+    "first_name": "Foil Waddles",
+    "final_name": "Foil Mallardon"
+  },
+  {
+    "id": 227,
+    "element": "Earth",
+    "rarity": "Exotic",
+    "first_name": "Foil Fossillia",
+    "final_name": "Foil Primordius"
+  },
+  {
+    "id": 230,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Foil Thundercracker",
+    "final_name": "Foil Clobberilla"
+  },
+  {
+    "id": 242,
+    "element": "Earth",
+    "rarity": "Epic",
+    "first_name": "Hoopty",
+    "final_name": "Shackle"
+  },
+  {
+    "id": 247,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Foil Kiloray",
+    "final_name": "Foil Edison Ray"
+  },
+  {
+    "id": 248,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Spangles",
+    "final_name": "Nova"
+  },
+  {
+    "id": 312,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Opigum",
+    "final_name": "Poggle"
+  },
+  {
+    "id": 322,
+    "element": "Fire",
+    "rarity": "Exotic",
+    "first_name": "Foil Flintly",
+    "final_name": "Foil Napalm"
+  },
+  {
+    "id": 326,
+    "element": "Earth",
+    "rarity": "Exotic",
+    "first_name": "Light Tectonyx",
+    "final_name": "Light Valrog"
+  },
+  {
+    "id": 338,
+    "element": "Fire",
+    "rarity": "Epic",
+    "first_name": "Flaring",
+    "final_name": "Lapinfire"
+  },
+  {
+    "id": 341,
+    "element": "WaterEarth",
+    "rarity": "Exotic",
+    "first_name": "Cadbunny",
+    "final_name": "Rolox"
+  },
+  {
+    "id": 352,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Fiender",
+    "final_name": "Airyn"
+  },
+  {
+    "id": 356,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Pillblaze",
+    "final_name": "Charrill"
+  },
+  {
+    "id": 367,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Blub",
+    "final_name": "Gargantubolt"
+  },
+  {
+    "id": 376,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Cerberuff",
+    "final_name": "Mongrian"
+  },
+  {
+    "id": 378,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Auger",
+    "final_name": "Rivett"
+  },
+  {
+    "id": 380,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Flurfy",
+    "final_name": "Kvetch"
+  },
+  {
+    "id": 382,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Squirmle",
+    "final_name": "Weylani"
+  },
+  {
+    "id": 388,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Lil Bubs",
+    "final_name": "Chubbles"
+  },
+  {
+    "id": 390,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Peekly",
+    "final_name": "Shamar"
+  },
+  {
+    "id": 404,
+    "element": "NatureEarth",
+    "rarity": "Exotic",
+    "first_name": "Splender",
+    "final_name": "Bolderon"
+  },
+  {
+    "id": 405,
+    "element": "FireLightning",
+    "rarity": "Epic",
+    "first_name": "Dorux",
+    "final_name": "Doruden"
+  },
+  {
+    "id": 417,
+    "element": "Earth",
+    "rarity": "Exotic",
+    "first_name": "Fubby",
+    "final_name": "Wachter"
+  },
+  {
+    "id": 419,
+    "element": "Wind",
+    "rarity": "Epic",
+    "first_name": "Pennon",
+    "final_name": "Blowhemoth"
+  },
+  {
+    "id": 420,
+    "element": "Water",
+    "rarity": "Exotic",
+    "first_name": "Ekkult",
+    "final_name": "Arcanaclaw"
+  },
+  {
+    "id": 425,
+    "element": "NatureEarth",
+    "rarity": "Exotic",
+    "first_name": "Defilio",
+    "final_name": "Spoiler"
+  },
+  {
+    "id": 430,
+    "element": "Nature",
+    "rarity": "Exotic",
+    "first_name": "Blighted Cubsprout",
+    "final_name": "Blighted Bloomane"
+  },
+  {
+    "id": 433,
+    "element": "Fire",
+    "rarity": "Legendary",
+    "first_name": "Blighted Flue",
+    "final_name": "Blighted Afterburn"
+  },
+  {
+    "id": 438,
+    "element": "NatureLightning",
+    "rarity": "Exotic",
+    "first_name": "Blobroller",
+    "final_name": "Vampsower"
+  },
+  {
+    "id": 451,
+    "element": "WaterLightning",
+    "rarity": "Epic",
+    "first_name": "Light Nibbles",
+    "final_name": "Light Coyver"
+  },
+  {
+    "id": 456,
+    "element": "Water",
+    "rarity": "Exotic",
+    "first_name": "Light Frostmite",
+    "final_name": "Light Abomino"
+  },
+  {
+    "id": 457,
+    "element": "Earth",
+    "rarity": "Exotic",
+    "first_name": "Light Bludger",
+    "final_name": "Light Convincer"
+  },
+  {
+    "id": 458,
+    "element": "NatureLightning",
+    "rarity": "Exotic",
+    "first_name": "Light Zaptor",
+    "final_name": "Light Tesladon"
+  },
+  {
+    "id": 459,
+    "element": "Nature",
+    "rarity": "Epic",
+    "first_name": "Light Quirk",
+    "final_name": "Light Subterhuge"
+  },
+  {
+    "id": 476,
+    "element": "FireLightning",
+    "rarity": "Exotic",
+    "first_name": "Light Statikat",
+    "final_name": "Light Panthundra"
+  },
+  {
+    "id": 480,
+    "element": "Water",
+    "rarity": "Exotic",
+    "first_name": "Dark Spinnerette",
+    "final_name": "Dark Gigantula"
+  },
+  {
+    "id": 488,
+    "element": "Nature",
+    "rarity": "Exotic",
+    "first_name": "Light Twiggum",
+    "final_name": "Light Willoak"
+  },
+  {
+    "id": 493,
+    "element": "Water",
+    "rarity": "Legendary",
+    "first_name": "Aquarion",
+    "final_name": "Krakyn"
+  },
+  {
+    "id": 500,
+    "element": "Wind",
+    "rarity": "Exotic",
+    "first_name": "Blighted Fiender",
+    "final_name": "Blighted Airyn"
+  },
+  {
+    "id": 501,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Blighted Kiloray",
+    "final_name": "Blighted Edison Ray"
+  },
+  {
+    "id": 502,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Dark Shellbee",
+    "final_name": "Dark Kalamos"
+  },
+  {
+    "id": 503,
+    "element": "Lightning",
+    "rarity": "Epic",
+    "first_name": "Liothning",
+    "final_name": "Gorgonthunder"
+  },
+  {
+    "id": 504,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Dark Lumera",
+    "final_name": "Dark Anublaze"
+  },
+  {
+    "id": 505,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Dark Steamguin",
+    "final_name": "Dark Aukamotive"
+  },
+  {
+    "id": 506,
+    "element": "Wind",
+    "rarity": "Legendary",
+    "first_name": "Dark Poltergust",
+    "final_name": "Dark Zephyrgeist"
+  },
+  {
+    "id": 507,
+    "element": "Nature",
+    "rarity": "Epic",
+    "first_name": "Dark Treemur",
+    "final_name": "Dark Monfiki"
+  },
+  {
+    "id": 508,
+    "element": "Earth",
+    "rarity": "Exotic",
+    "first_name": "Foil Vexie",
+    "final_name": "Foil Alionyx"
+  },
+  {
+    "id": 509,
+    "element": "Wind",
+    "rarity": "Exotic",
+    "first_name": "Foil Vhisp",
+    "final_name": "Foil Fangale"
+  },
+  {
+    "id": 510,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Dark Sparkupine",
+    "final_name": "Dark Wiquill"
+  },
+  {
+    "id": 511,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Dark Squibee",
+    "final_name": "Dark Krakenhook"
+  },
+  {
+    "id": 512,
+    "element": "Water",
+    "rarity": "Epic",
+    "first_name": "Dark Waddles",
+    "final_name": "Dark Mallardon"
+  },
+  {
+    "id": 513,
+    "element": "Nature",
+    "rarity": "Epic",
+    "first_name": "Dark Twiggum",
+    "final_name": "Dark Willoak"
+  },
+  {
+    "id": 514,
+    "element": "Earth",
+    "rarity": "Epic",
+    "first_name": "Dark Auger",
+    "final_name": "Dark Rivett"
+  },
+  {
+    "id": 515,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Dark Aria",
+    "final_name": "Dark Wyndasia"
+  },
+  {
+    "id": 516,
+    "element": "FireLightning",
+    "rarity": "Epic",
+    "first_name": "Light Rafiery",
+    "final_name": "Light Stomprage"
+  },
+  {
+    "id": 517,
+    "element": "WaterEarth",
+    "rarity": "Epic",
+    "first_name": "Light Fossillia",
+    "final_name": "Light Primordius"
+  },
+  {
+    "id": 518,
+    "element": "Wind",
+    "rarity": "Exotic",
+    "first_name": "Light Nanaslug",
+    "final_name": "Light Tornadouse"
+  },
+  {
+    "id": 519,
+    "element": "Fire",
+    "rarity": "Exotic",
+    "first_name": "Light Crickin",
+    "final_name": "Light Praze"
+  },
+  {
+    "id": 520,
+    "element": "FireWind",
+    "rarity": "Epic",
+    "first_name": "Light Flue",
+    "final_name": "Light Afterburn"
+  },
+  {
+    "id": 521,
+    "element": "NatureWind",
+    "rarity": "Epic",
+    "first_name": "Light Grubbean",
+    "final_name": "Light Thornaxis"
+  },
+  {
+    "id": 522,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Ribos",
+    "final_name": "Plasmaree"
+  },
+  {
+    "id": 523,
+    "element": "Lightning",
+    "rarity": "Rare",
+    "first_name": "Light Sparkspeck",
+    "final_name": "Light Glitterglint"
+  },
+  {
+    "id": 524,
+    "element": "WaterWind",
+    "rarity": "Rare",
+    "first_name": "Light Wavesling",
+    "final_name": "Light Nessilisk"
+  },
+  {
+    "id": 525,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Light Jack",
+    "final_name": "Light Tuzee"
+  },
+  {
+    "id": 526,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Light Flurfy",
+    "final_name": "Light Kvetch"
+  },
+  {
+    "id": 527,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Light Slithero",
+    "final_name": "Light Incineron"
+  },
+  {
+    "id": 528,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Light Squibee",
+    "final_name": "Light Krakenhook"
+  },
+  {
+    "id": 529,
+    "element": "FireEarth",
+    "rarity": "Epic",
+    "first_name": "Light Digsy",
+    "final_name": "Light Excavior"
+  },
+  {
+    "id": 530,
+    "element": "FireLightning",
+    "rarity": "Legendary",
+    "first_name": "Light Ignios",
+    "final_name": "Light Preliator"
+  },
+  {
+    "id": 531,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Light Mumbah",
+    "final_name": "Light Sphynxus"
+  },
+  {
+    "id": 532,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Dark Tongutail",
+    "final_name": "Dark Bifurcrystal"
+  },
+  {
+    "id": 533,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Dark Lavarilla",
+    "final_name": "Dark Obsidiape"
+  },
+  {
+    "id": 534,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Dark Frostmite",
+    "final_name": "Dark Abomino"
+  },
+  {
+    "id": 535,
+    "element": "Nature",
+    "rarity": "Epic",
+    "first_name": "Dark Tulipinny",
+    "final_name": "Dark Ongabonga"
+  },
+  {
+    "id": 536,
+    "element": "Wind",
+    "rarity": "Epic",
+    "first_name": "Dark Flutterpat",
+    "final_name": "Dark Gazaereal"
+  },
+  {
+    "id": 537,
+    "element": "Fire",
+    "rarity": "Exotic",
+    "first_name": "Dark Slithero",
+    "final_name": "Dark Incineron"
+  },
+  {
+    "id": 538,
+    "element": "NatureEarth",
+    "rarity": "Legendary",
+    "first_name": "Keeper",
+    "final_name": "Fortifield"
+  },
+  {
+    "id": 539,
+    "element": "Lightning",
+    "rarity": "Epic",
+    "first_name": "Dark Luna",
+    "final_name": "Dark Antennious"
+  },
+  {
+    "id": 540,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Foil Luna",
+    "final_name": "Foil Antennious"
+  },
+  {
+    "id": 541,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Sol",
+    "final_name": "Cithreus"
+  },
+  {
+    "id": 542,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Dreamger",
+    "final_name": "Traumauler"
+  },
+  {
+    "id": 543,
+    "element": "NatureEarth",
+    "rarity": "Epic",
+    "first_name": "Light Weevern",
+    "final_name": "Light Serpasoar"
+  },
+  {
+    "id": 544,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Dark Quirk",
+    "final_name": "Dark Subterhuge"
+  },
+  {
+    "id": 545,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Dark Squirmle",
+    "final_name": "Dark Weylani"
+  },
+  {
+    "id": 546,
+    "element": "Nature",
+    "rarity": "Legendary",
+    "first_name": "Blighted Flowerpiller",
+    "final_name": "Blighted Fairyblossom"
+  },
+  {
+    "id": 547,
+    "element": "Lightning",
+    "rarity": "Epic",
+    "first_name": "Dark Jellyshock",
+    "final_name": "Dark Medustung"
+  },
+  {
+    "id": 548,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Light Hawkai",
+    "final_name": "Light Hawkogan"
+  },
+  {
+    "id": 549,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Dark Vexie",
+    "final_name": "Dark Alionyx"
+  },
+  {
+    "id": 550,
+    "element": "Wind",
+    "rarity": "Legendary",
+    "first_name": "Da Windy",
+    "final_name": "Michelangelus"
+  },
+  {
+    "id": 551,
+    "element": "WaterWind",
+    "rarity": "Exotic",
+    "first_name": "Light Snorkels",
+    "final_name": "Light Leviafin"
+  },
+  {
+    "id": 552,
+    "element": "Earth",
+    "rarity": "Legendary",
+    "first_name": "Foil Croaky",
+    "final_name": "Foil Geotoad"
+  },
+  {
+    "id": 553,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Freezet",
+    "final_name": "Blizzword"
+  },
+  {
+    "id": 554,
+    "element": "Fire",
+    "rarity": "Epic",
+    "first_name": "Dark Pillblaze",
+    "final_name": "Dark Charrill"
+  },
+  {
+    "id": 555,
+    "element": "Earth",
+    "rarity": "Exotic",
+    "first_name": "Rudy",
+    "final_name": "Coalrus"
+  },
+  {
+    "id": 556,
+    "element": "Lightning",
+    "rarity": "Legendary",
+    "first_name": "Manio",
+    "final_name": "Starshow"
+  },
+  {
+    "id": 557,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Mistraxol",
+    "final_name": "Olmisteus"
+  },
+  {
+    "id": 558,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Orbling",
+    "final_name": "Caverachna"
+  },
+  {
+    "id": 559,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Zappup",
+    "final_name": "Thunderuff"
+  },
+  {
+    "id": 560,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Pestling",
+    "final_name": "Wicking"
+  },
+  {
+    "id": 561,
+    "element": "Water",
+    "rarity": "Legendary",
+    "first_name": "Woolly",
+    "final_name": "Styrammuth"
+  },
+  {
+    "id": 562,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Frozy",
+    "final_name": "Citashell"
+  },
+  {
+    "id": 563,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Stalkra",
+    "final_name": "Leffa"
+  },
+  {
+    "id": 564,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Mech",
+    "final_name": "Destructo"
+  },
+  {
+    "id": 565,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Rexie",
+    "final_name": "Tyrant"
+  },
+  {
+    "id": 566,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Warrian",
+    "final_name": "Moltrusian"
+  },
+  {
+    "id": 567,
+    "element": "NatureWind",
+    "rarity": "Common",
+    "first_name": "Aebex",
+    "final_name": "Inhalate"
+  },
+  {
+    "id": 568,
+    "element": "Nature",
+    "rarity": "Rare",
+    "first_name": "Charix",
+    "final_name": "Carnagion"
+  },
+  {
+    "id": 569,
+    "element": "Nature",
+    "rarity": "Exotic",
+    "first_name": "Alpha",
+    "final_name": "Sire"
+  },
+  {
+    "id": 570,
+    "element": "Fire",
+    "rarity": "Legendary",
+    "first_name": "Charpy",
+    "final_name": "Chimpferno"
+  },
+  {
+    "id": 571,
+    "element": "Lightning",
+    "rarity": "Rare",
+    "first_name": "Lambolt",
+    "final_name": "Lycanimbus"
+  },
+  {
+    "id": 572,
+    "element": "Earth",
+    "rarity": "Exotic",
+    "first_name": "Gravitron",
+    "final_name": "Gate Keeper"
+  },
+  {
+    "id": 573,
+    "element": "Earth",
+    "rarity": "Epic",
+    "first_name": "Babakku",
+    "final_name": "Lundevour"
+  },
+  {
+    "id": 574,
+    "element": "Fire",
+    "rarity": "Exotic",
+    "first_name": "Smolderfry",
+    "final_name": "Clawsteroid"
+  },
+  {
+    "id": 575,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Moondrip",
+    "final_name": "Noxilunar"
+  },
+  {
+    "id": 576,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Shroolet",
+    "final_name": "Funglor"
+  },
+  {
+    "id": 577,
+    "element": "Earth",
+    "rarity": "Common",
+    "first_name": "Lumite",
+    "final_name": "Gemarax"
+  },
+  {
+    "id": 578,
+    "element": "FireWind",
+    "rarity": "Legendary",
+    "first_name": "Voidotron",
+    "final_name": "Void Warden"
+  },
+  {
+    "id": 579,
+    "element": "Wind",
+    "rarity": "Epic",
+    "first_name": "Niboro",
+    "final_name": "Monodra"
+  },
+  {
+    "id": 580,
+    "element": "Water",
+    "rarity": "Exotic",
+    "first_name": "Pinplar",
+    "final_name": "Bonefish"
+  },
+  {
+    "id": 581,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Lithos",
+    "final_name": "Progenitus"
+  },
+  {
+    "id": 582,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Brainzer",
+    "final_name": "Egghead"
+  },
+  {
+    "id": 583,
+    "element": "Fire",
+    "rarity": "Exotic",
+    "first_name": "Pyrex",
+    "final_name": "Novasol"
+  },
+  {
+    "id": 584,
+    "element": "WaterLightning",
+    "rarity": "Rare",
+    "first_name": "Oozie",
+    "final_name": "Slimonda"
+  },
+  {
+    "id": 585,
+    "element": "FireEarth",
+    "rarity": "Rare",
+    "first_name": "Lunako",
+    "final_name": "Mograkoon"
+  },
+  {
+    "id": 586,
+    "element": "Wind",
+    "rarity": "Rare",
+    "first_name": "Rephily",
+    "final_name": "Tyvalune"
+  },
+  {
+    "id": 587,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Eluzar",
+    "final_name": "Tenebu"
+  },
+  {
+    "id": 588,
+    "element": "Fire",
+    "rarity": "Rare",
+    "first_name": "Furiko",
+    "final_name": "Vulcrysa"
+  },
+  {
+    "id": 589,
+    "element": "WaterEarth",
+    "rarity": "Epic",
+    "first_name": "Bunplop",
+    "final_name": "Vornaclast"
+  },
+  {
+    "id": 590,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Drilune",
+    "final_name": "Acarion"
+  },
+  {
+    "id": 591,
+    "element": "FireEarth",
+    "rarity": "Common",
+    "first_name": "Flaclay",
+    "final_name": "Magros"
+  },
+  {
+    "id": 592,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Enex",
+    "final_name": "Eclipsagon"
+  },
+  {
+    "id": 593,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Voltombra",
+    "final_name": "Zevurnox"
+  },
+  {
+    "id": 594,
+    "element": "Wind",
+    "rarity": "Exotic",
+    "first_name": "Eclipso",
+    "final_name": "Tenebros"
+  },
+  {
+    "id": 595,
+    "element": "Water",
+    "rarity": "Rare",
+    "first_name": "Osmeron",
+    "final_name": "Mystacle"
+  },
+  {
+    "id": 596,
+    "element": "WaterEarth",
+    "rarity": "Rare",
+    "first_name": "Mooncrit",
+    "final_name": "Crateron"
+  },
+  {
+    "id": 597,
+    "element": "Earth",
+    "rarity": "Legendary",
+    "first_name": "Beateorite",
+    "final_name": "Armageddon"
+  },
+  {
+    "id": 598,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Silkire",
+    "final_name": "Infernofang"
+  },
+  {
+    "id": 599,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Zephry",
+    "final_name": "Valydorm"
+  },
+  {
+    "id": 600,
+    "element": "Water",
+    "rarity": "Common",
+    "first_name": "Fungask",
+    "final_name": "Venoplazm"
+  },
+  {
+    "id": 601,
+    "element": "Wind",
+    "rarity": "Epic",
+    "first_name": "Larbunni",
+    "final_name": "Yutuluna"
+  },
+  {
+    "id": 602,
+    "element": "Nature",
+    "rarity": "Common",
+    "first_name": "Yuefira",
+    "final_name": "Cnidalien"
+  },
+  {
+    "id": 603,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Mucora",
+    "final_name": "Mortovela"
+  },
+  {
+    "id": 604,
+    "element": "WaterEarth",
+    "rarity": "Common",
+    "first_name": "Goo",
+    "final_name": "Necroslime"
+  },
+  {
+    "id": 605,
+    "element": "FireWind",
+    "rarity": "Common",
+    "first_name": "Avarus",
+    "final_name": "Thanaross"
+  },
+  {
+    "id": 606,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Beakka",
+    "final_name": "Rupturea"
+  },
+  {
+    "id": 607,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Whispen",
+    "final_name": "Ectyros"
+  },
+  {
+    "id": 608,
+    "element": "Lightning",
+    "rarity": "Common",
+    "first_name": "Fickra",
+    "final_name": "Zatavol"
+  },
+  {
+    "id": 609,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Pirate Bludger",
+    "final_name": "Pirate Convincer"
+  },
+  {
+    "id": 610,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Lutox",
+    "final_name": "Sigarope"
+  },
+  {
+    "id": 611,
+    "element": "Earth",
+    "rarity": "Rare",
+    "first_name": "Deetlee",
+    "final_name": "Kopul"
+  },
+  {
+    "id": 612,
+    "element": "Lightning",
+    "rarity": "Rare",
+    "first_name": "Ampupine",
+    "final_name": "Thundra"
+  },
+  {
+    "id": 613,
+    "element": "NatureWind",
+    "rarity": "Epic",
+    "first_name": "Hekatom",
+    "final_name": "Unbound"
+  },
+  {
+    "id": 614,
+    "element": "Nature",
+    "rarity": "Epic",
+    "first_name": "Scarecrow Charix",
+    "final_name": "Scarecrow Carnagion"
+  },
+  {
+    "id": 615,
+    "element": "Wind",
+    "rarity": "Epic",
+    "first_name": "Vamp Skustunk",
+    "final_name": "Vamp Sulfurious"
+  },
+  {
+    "id": 616,
+    "element": "Lightning",
+    "rarity": "Epic",
+    "first_name": "Grimm Kiloray",
+    "final_name": "Grimm Edison Ray"
+  },
+  {
+    "id": 617,
+    "element": "Wind",
+    "rarity": "Exotic",
+    "first_name": "Rocker Octavio",
+    "final_name": "Rocker Dischord"
+  },
+  {
+    "id": 618,
+    "element": "Fire",
+    "rarity": "Exotic",
+    "first_name": "Boo Blazertooth",
+    "final_name": "Boo Minotorch"
+  },
+  {
+    "id": 619,
+    "element": "Nature",
+    "rarity": "Legendary",
+    "first_name": "Geneseed",
+    "final_name": "Netherreap"
+  },
+  {
+    "id": 620,
+    "element": "Wind",
+    "rarity": "Common",
+    "first_name": "Sora",
+    "final_name": "Zephtsune"
+  },
+  {
+    "id": 621,
+    "element": "Lightning",
+    "rarity": "Rare",
+    "first_name": "Dark Sparkslug",
+    "final_name": "Dark Buzzcargo"
+  },
+  {
+    "id": 622,
+    "element": "Fire",
+    "rarity": "Epic",
+    "first_name": "Phoboros",
+    "final_name": "Stravatach"
+  },
+  {
+    "id": 623,
+    "element": "Water",
+    "rarity": "Exotic",
+    "first_name": "Lagoony",
+    "final_name": "Blackfin"
+  },
+  {
+    "id": 624,
+    "element": "Fire",
+    "rarity": "Common",
+    "first_name": "Poppet",
+    "final_name": "Breocharn"
+  },
+  {
+    "id": 625,
+    "element": "Lightning",
+    "rarity": "Rare",
+    "first_name": "Nubyll",
+    "final_name": "Mrakovlad"
+  },
+  {
+    "id": 626,
+    "element": "Water",
+    "rarity": "Epic",
+    "first_name": "Elphin",
+    "final_name": "Makras"
+  },
+  {
+    "id": 627,
+    "element": "Fire",
+    "rarity": "Exotic",
+    "first_name": "Luvcraft",
+    "final_name": "Cthulith"
+  },
+  {
+    "id": 628,
+    "element": "Lightning",
+    "rarity": "Exotic",
+    "first_name": "Damse",
+    "final_name": "Beruette"
+  },
+  {
+    "id": 629,
+    "element": "Lightning",
+    "rarity": "Legendary",
+    "first_name": "Beldame",
+    "final_name": "Bakuyaga"
+  }
+]

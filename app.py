@@ -2,6 +2,12 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
+import hashlib
+import json
+import requests
+from io import BytesIO
+import shutil
+
 import streamlit as st
 from PIL import Image
 
@@ -10,16 +16,21 @@ from PIL import Image
 # =====================================================================
 
 ROOT = Path(__file__).parent.resolve()
-# Adjust these paths if your folder structure is different
+
 GODOT_BIN = ROOT / "bin" / "Godot_v4.1-stable_linux.x86_64"
-DECODE_SCRIPT = ROOT / "gd_scripts" / "crits_single_decode.gd"
 ENCODE_SCRIPT = ROOT / "gd_scripts" / "crits_single_encode.gd"
+FAVICON_PATH = ROOT / "assets" / "favicon.ico"
+
+# Stripped catalog: id, element, rarity, first_name, final_name
+MISCRIT_CATALOG_PATH = ROOT / "assets" / "miscrits_first_final_names.json"
+
+PAGE_SIZE = 16  # how many Miscrits to render at once
 
 st.set_page_config(
     page_title="Miscrits Sprite Replacer",
     layout="wide",
-    page_icon="🎮",
-    initial_sidebar_state="expanded"
+    page_icon=str(FAVICON_PATH) if FAVICON_PATH.exists() else "🎮",
+    initial_sidebar_state="expanded",
 )
 
 # =====================================================================
@@ -27,74 +38,169 @@ st.set_page_config(
 # =====================================================================
 
 def local_css():
-    st.markdown("""
+    st.markdown(
+        """
     <style>
+        body {
+            background-color: #000000;
+        }
         div.stButton > button {
             width: 100%;
             border-radius: 8px;
         }
         .stProgress > div > div > div > div {
-            background-color: #ff4b4b;
+            background-color: #ffcc33;
         }
-        /* Fix for image captions alignment */
         div[data-testid="caption"] {
             text-align: center;
         }
     </style>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
-def short_name(name: str, max_len: int = 12) -> str:
+
+def short_name(name: str, max_len: int = 14) -> str:
     if len(name) <= max_len:
         return name
-    return name[:max_len] + "..."
+    return name[: max_len - 3] + "..."
 
-def render_progress_bar(current_step: int):
+@st.cache_data
+def load_miscrit_catalog():
+    if not MISCRIT_CATALOG_PATH.exists():
+        return []
+
+    with open(MISCRIT_CATALOG_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+ELEMENT_ICON_BASE = "https://worldofmiscrits.com"
+BASE_ELEMENTS = ["Fire", "Water", "Nature", "Wind", "Earth", "Lightning"]
+
+
+def base_element(element: str) -> str:
     """
-    Updated progress bar that maintains consistent height 
-    to prevent UI jumping/shifting.
+    For dual-types like 'FireWind', pick the first matching base element.
     """
-    steps = {
-        1: "Upload",
-        2: "Select",
-        3: "Replace",
-        4: "Download"
-    }
-    
-    cols = st.columns(len(steps))
-    for i, (step_num, label) in enumerate(steps.items()):
-        with cols[i]:
-            # REMOVED the '####' header which caused the vertical shift
-            if step_num == current_step:
-                st.markdown(f":blue[**🔵 {label}**]") 
-                st.progress(100)
-            elif step_num < current_step:
-                st.markdown(f"**✅ {label}**")
-                st.progress(100)
-            else:
-                st.markdown(f":grey[{label}]")
-                st.progress(0)
-    st.divider()
+    for k in BASE_ELEMENTS:
+        if element.startswith(k):
+            return k
+    return element
+
+
+def element_icon_url(element: str) -> str:
+    base = base_element(element)
+    return f"{ELEMENT_ICON_BASE}/{base.lower()}.png"
+
+
+def sprite_cdn_url(name: str) -> str:
+    """
+    Build CDN URL for a miscrit back sprite given an evo name.
+    Mirrors: miscrit.names[evo_id].replace(" ", "_").to_lower() + "_back.png"
+    """
+    slug = name.replace(" ", "_").lower()
+    return f"https://cdn.worldofmiscrits.com/miscrits/{slug}_back.png"
+
+
+AVATAR_BASE = "https://cdn.worldofmiscrits.com/avatars"
+
+
+def avatar_cdn_url(name: str) -> str:
+    """Build CDN URL for a Miscrit avatar icon (50x50)."""
+    slug = name.replace(" ", "_").lower()
+    return f"{AVATAR_BASE}/{slug}_avatar.png"
+
+
+def sprite_cache_filename(url: str) -> str:
+    """
+    Cache filename is SHA256 of the full CDN URL (hex, no extension).
+    """
+    return hashlib.sha256(url.encode("utf-8")).hexdigest()
+
+
+def load_sprite_on_canvas(url: str, canvas_size=(256, 256)):
+    """
+    Load a Miscrit sprite from the CDN, scale it down to fit inside
+    `canvas_size` while keeping aspect ratio, and center it on a
+    transparent canvas. This makes all card boxes the same size.
+    """
+    try:
+        resp = requests.get(url, timeout=5)
+        resp.raise_for_status()
+    except Exception:
+        # If fetch fails, return an empty transparent canvas
+        return Image.new("RGBA", canvas_size, (0, 0, 0, 0))
+
+    img = Image.open(BytesIO(resp.content)).convert("RGBA")
+
+    # Scale down to fit inside canvas while preserving aspect ratio
+    img.thumbnail(canvas_size, Image.LANCZOS)
+
+    # Center on a transparent canvas
+    canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
+    x = (canvas_size[0] - img.width) // 2
+    y = (canvas_size[1] - img.height) // 2
+    canvas.paste(img, (x, y), img)
+
+    return canvas
+
+
+def place_on_canvas(img: Image.Image, canvas_size=(256, 256)) -> Image.Image:
+    """Center an image on a transparent canvas of fixed size for display."""
+    canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
+    x = (canvas_size[0] - img.width) // 2
+    y = (canvas_size[1] - img.height) // 2
+    canvas.paste(img, (x, y), img)
+    return canvas
+
+
+def get_original_sprite_size(url: str):
+    """
+    Download the original final-evo sprite from the CDN and return (width, height).
+    If anything goes wrong, fall back to a reasonable default.
+    """
+    try:
+        resp = requests.get(url, timeout=5)
+        resp.raise_for_status()
+        img = Image.open(BytesIO(resp.content))
+        return img.size  # (w, h)
+    except Exception:
+        return (256, 256)
+
+
+def reset_workdir():
+    """Delete the current workdir and create a fresh one."""
+    old_dir = Path(st.session_state.get("workdir", tempfile.gettempdir()))
+    shutil.rmtree(old_dir, ignore_errors=True)
+    new_dir = tempfile.mkdtemp(prefix="miscrits_sprites_")
+    st.session_state["workdir"] = new_dir
+    return Path(new_dir)
+
 
 # =====================================================================
 # State Management
 # =====================================================================
 
-if "workdir" not in st.session_state:
-    st.session_state["workdir"] = tempfile.mkdtemp(prefix="miscrits_sprites_")
+if "step" not in st.session_state:
     st.session_state["step"] = 1
-    st.session_state["decoded_sprites_meta"] = [] 
-    st.session_state["selected_idx"] = None
+    st.session_state["selected_miscrit"] = None
+    st.session_state["workdir"] = tempfile.mkdtemp(prefix="miscrits_sprites_")
+    st.session_state["page"] = 0
+    st.session_state["patched_path"] = None
     st.session_state["resized_path"] = None
+    st.session_state["uploaded_image_bytes"] = None
+    st.session_state["uploaded_image_name"] = None
+    st.session_state["patched_bytes"] = None
+    st.session_state["needs_reencode"] = False
+    st.session_state["prev_scale_factor"] = None
+    st.session_state["prev_keep_aspect"] = None
+    st.session_state["upload_hash"] = None
+    st.session_state["scale_factor"] = 1.0
+    st.session_state["keep_aspect"] = True
+    st.session_state["edit_mode"] = "Sprite"
+    st.session_state["prev_edit_mode"] = "Sprite"
 
 workdir = Path(st.session_state["workdir"])
-
-# Reconstruct objects
-decoded_sprites = []
-for slot_idx, full_name, enc_path_str, decoded_png_str in st.session_state["decoded_sprites_meta"]:
-    enc = Path(enc_path_str)
-    dec = Path(decoded_png_str)
-    if dec.exists():
-        decoded_sprites.append((slot_idx, full_name, enc, dec))
 
 # =====================================================================
 # UI: Sidebar
@@ -102,318 +208,510 @@ for slot_idx, full_name, enc_path_str, decoded_png_str in st.session_state["deco
 
 with st.sidebar:
     st.title("🎮 Sprite Replacer")
+
     st.info(
-        "**Quick Guide:**\n"
-        "1. Clear `image_cache/sprites`.\n"
-        "2. Put crits in party & close game.\n"
-        "3. Upload encrypted files.\n"
-        "4. Swap art & download."
+        "**How this tool works:**\n"
+        "1. Pick a Miscrit from the Miscrits grid.\n"
+        "2. Choose whether you want to replace the **Sprite** or the **Avatar**.\n"
+        "3. Upload your replacement image and resize it if needed.\n"
+        "4. Download the encrypted cache file.\n"
+        "5. Drop that file into the correct folder and overwrite the existing file."
     )
-    st.markdown("## 🎥 Tutorial Video")
+
+    st.markdown("### 📁 Where to put the file")
+    st.markdown(
+        """
+**Windows path (copy-paste into Explorer):**
+
+- If you are editing **Sprite**:
+
+```text
+%USERPROFILE%\\AppData\\Roaming\\Godot\\app_userdata\\Miscrits\\image_cache\\sprites
+```
+
+- If you are editing **Avatar**:
+
+```text
+%USERPROFILE%\\AppData\\Roaming\\Godot\\app_userdata\\Miscrits\\image_cache\\miscrits
+```
+
+Once you're there:
+
+1. Sort the folder by **Date modified** so the newest file is on top.  
+2. Make sure the filename matches **exactly** the one shown in the app (a long hash like `b6b0c2...`).  
+3. Replace the existing file **in place**.  
+   - If Windows adds things like ` (1)` or extra extensions, it will **not** work — rename it back to the exact hash.
+"""
+    )
+
+    st.markdown("### 🎥 Tutorial Video")
     st.video("assets/spriteguide-real-2.mp4")
-    
-    if st.button("🔄 Reset All", type="secondary"):
+
+    if st.button("🔄 Reset Session", type="secondary"):
+        # Clear everything and reset
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
-    st.markdown("## 🧾 How it works")
-    st.markdown(
-        """
-1. **Prep your sprites folder on your PC:**
-   - Go to your Miscrits sprites folder (example below).
-   - Delete everything inside it.
-   - Open the game and put the crits you want to change into your **party** (max 4).
-   - Close the game. That `sprites` folder should now contain only 1 to 4 encrypted files.
 
-2. **Upload those encrypted files** in **Step 1**.
-
-3. The app will:
-   - **Decrypt** and preview each sprite.
-   - Let you **upload replacement art** for any sprite.
-   - **Auto-resize** to the original dimensions.
-   - **Re-encrypt** into a new file you can drop back into the game.
-
-4. Replace the files in `image_cache\\sprites` and start the game 🎉
-"""
-    )
-
-    st.markdown("### 📁 Example sprites folder path (Windows)")
-    st.markdown(
-        """
-Your path will look something like:
-
-```text
-C:\\Users\\YOUR_USERNAME\\AppData\\Roaming\\Godot\\app_userdata\\Miscrits\\image_cache\\sprites
-````
-
-Replace `YOUR_USERNAME` with your own Windows username
-(e.g. `appy` in `C:\\Users\\appy\\...`).
-"""
-)
 # =====================================================================
-# UI: Main Content
+# UI: Main Header
 # =====================================================================
 
 local_css()
 st.title("Miscrits Sprite Tool")
-st.caption("Refer to the panel on the left for instructions first.")
-render_progress_bar(st.session_state["step"])
+st.caption("Browse crits by name, element and rarity, then swap the final evo sprite/avatar.")
+
 
 # --- CHECK BINARY ---
+
 if not GODOT_BIN.exists() or not os.access(GODOT_BIN, os.X_OK):
     st.error(f"❌ Godot binary missing or not executable at: `{GODOT_BIN}`")
     st.stop()
 
+if not ENCODE_SCRIPT.exists():
+    st.error(f"❌ Encode script missing at: `{ENCODE_SCRIPT}`")
+    st.stop()
+
 # =====================================================================
-# STEP 1: UPLOAD & DECODE
+# STEP 1: MISCRIPEDIA GRID
 # =====================================================================
+
 if st.session_state["step"] == 1:
-    st.header("Step 1: Upload Encrypted Files")
-    
-    uploaded_files = st.file_uploader(
-        "Drop your encrypted sprite files here",
-        accept_multiple_files=True,
-        key="uploader"
+    st.header("Step 1: Choose a Miscrit")
+
+    catalog = load_miscrit_catalog()
+    if not catalog:
+        st.error("Could not load miscrits_first_final_names.json")
+        st.stop()
+
+    # --- Search & Filters ---
+    search_term = st.text_input(
+        "Search Miscrits...",
+        placeholder="Flue, Flowerpiller, Afterburn...",
     )
 
-    if uploaded_files:
-        if st.button("🚀 Decrypt Files", type="primary"):
-            decode_errors = []
-            decoded_temp = []
-            
-            progress_bar = st.progress(0)
-            
-            for i, enc_file in enumerate(uploaded_files):
-                enc_path = workdir / enc_file.name
-                with open(enc_path, "wb") as f:
-                    f.write(enc_file.getbuffer())
+    col_rarity, col_element = st.columns([1, 1])
+    all_rarities = sorted({m["rarity"] for m in catalog})
+    all_elements = sorted({m["element"] for m in catalog})
 
-                decoded_png = workdir / f"{enc_file.name}.decoded.png"
-                cmd = [str(GODOT_BIN), "--headless", "--script", str(DECODE_SCRIPT), "--", str(enc_path), str(decoded_png)]
-                res = subprocess.run(cmd, capture_output=True, text=True)
+    with col_rarity:
+        rarity_filter = st.multiselect(
+            "All Rarities", all_rarities, default=None
+        )
 
-                if res.returncode == 0 and decoded_png.exists():
-                    slot_idx = len(decoded_temp)
-                    decoded_temp.append((slot_idx, enc_file.name, str(enc_path), str(decoded_png)))
-                else:
-                    decode_errors.append(enc_file.name)
-                
-                progress_bar.progress((i + 1) / len(uploaded_files))
+    with col_element:
+        element_filter = st.multiselect(
+            "All Elements", all_elements, default=[]
+        )
 
-            if decoded_temp:
-                st.session_state["decoded_sprites_meta"] = decoded_temp
-                st.session_state["step"] = 2
-                st.toast(f"✅ Successfully decoded {len(decoded_temp)} sprites!", icon="🎉")
+    # --- Apply filtering ---
+    filtered = []
+    for m in catalog:
+        # Search by first or final evo name
+        if search_term:
+            s = search_term.lower()
+            if s not in m["first_name"].lower() and s not in m["final_name"].lower():
+                continue
+
+        if rarity_filter and m["rarity"] not in rarity_filter:
+            continue
+
+        if element_filter and m["element"] not in element_filter:
+            continue
+
+        filtered.append(m)
+
+    total = len(filtered)
+    if total == 0:
+        st.caption("No Miscrits match your filters.")
+    else:
+        # Pagination
+        page = st.session_state.get("page", 0)
+        max_page = max((total - 1) // PAGE_SIZE, 0)
+        if page > max_page:
+            page = max_page
+            st.session_state["page"] = page
+
+        start_idx = page * PAGE_SIZE
+        end_idx = min(start_idx + PAGE_SIZE, total)
+        page_items = filtered[start_idx:end_idx]
+
+        st.caption(f"Showing {start_idx + 1}-{end_idx} of {total} Miscrits")
+
+        col_prev, col_page, col_next = st.columns([1, 2, 1])
+        with col_prev:
+            if st.button("⬅️ Previous", disabled=page == 0):
+                st.session_state["page"] = max(page - 1, 0)
                 st.rerun()
-            elif decode_errors:
-                st.error("Could not decode files. Are they valid Miscrit sprite files?")
+        with col_page:
+            st.markdown(f"<p style='text-align:center;'>Page {page + 1} of {max_page + 1}</p>", unsafe_allow_html=True)
+        with col_next:
+            if st.button("Next ➡️", disabled=page >= max_page):
+                st.session_state["page"] = min(page + 1, max_page)
+                st.rerun()
+
+        # --- Card grid ---
+        cols = st.columns(4)
+        for i, m in enumerate(page_items):
+            col = cols[i % 4]
+            with col:
+                with st.container(border=True):
+                    # Top row: element icon + name
+                    icon_url = element_icon_url(m["element"])
+                    c1, c2 = st.columns([1, 3])
+                    with c1:
+                        st.image(icon_url, width='stretch')
+                    with c2:
+                        st.markdown(f"**{m['first_name']}**")
+                        st.caption(f"Final: {m['final_name']}")
+
+                    # Sprite preview = FIRST evo back sprite
+                    sprite_url = sprite_cdn_url(m["first_name"])
+
+                    # Draw sprite on a fixed-size canvas so every card is the same height
+                    sprite_img = load_sprite_on_canvas(sprite_url, canvas_size=(256, 256))
+                    st.image(sprite_img, width='stretch')
+
+                    # Meta row
+                    st.caption(f"{m['element']} • {m['rarity']}")
+
+                    # Select button
+                    if st.button(
+                        "Change Sprite",
+                        key=f"sel_{m['id']}",
+                        type="primary",
+                        width='stretch',
+                    ):
+                        st.session_state["selected_miscrit"] = m
+                        st.session_state["step"] = 2
+                        # reset per-edit paths
+                        st.session_state["patched_path"] = None
+                        st.session_state["resized_path"] = None
+                        st.rerun()
 
 # =====================================================================
-# STEP 2: VISUAL SELECTION
+# STEP 2: EDIT + ENCODE + DOWNLOAD
 # =====================================================================
+
 elif st.session_state["step"] == 2:
-    st.header("Step 2: Select Sprite to Edit")
-    st.caption("Here are the sprites currently in your party. Choose one to replace.")
+    m = st.session_state.get("selected_miscrit")
+    if not m:
+        st.warning("No Miscrit selected. Please go back and pick one.")
+        if st.button("⬅️ Back to Miscrits"):
+            st.session_state["step"] = 1
+            st.rerun()
+        st.stop()
 
-    # 4-Column Grid
-    cols = st.columns(4)
-    for i, (slot_idx, full_name, _, png_path) in enumerate(decoded_sprites):
-        col = cols[i % 4]
-        with col:
-            with st.container(border=True):
-                st.image(str(png_path), width='stretch')
-                st.markdown(f"**{short_name(full_name)}**")
-                if st.button(f"Edit", key=f"sel_{i}", type="primary", width='stretch'):
-                    st.session_state["selected_idx"] = i
-                    st.session_state["step"] = 3
+    first_name = m["first_name"]
+    final_name = m["final_name"]
+
+    # Toggle between editing final evolution sprite or avatar
+    edit_mode = st.radio(
+        "What do you want to replace?",
+        ["Sprite", "Avatar"],
+        horizontal=True,
+        index=0 if st.session_state.get("edit_mode", "Sprite") == "Sprite" else 1,
+    )
+    st.session_state["edit_mode"] = edit_mode
+
+    prev_mode = st.session_state.get("prev_edit_mode", "Sprite")
+    if edit_mode != prev_mode:
+        # Switching between sprite/avatar: clear per-mode state
+        st.session_state["patched_path"] = None
+        st.session_state["resized_path"] = None
+        st.session_state["uploaded_image_bytes"] = None
+        st.session_state["uploaded_image_name"] = None
+        st.session_state["patched_bytes"] = None
+        st.session_state["needs_reencode"] = False
+        st.session_state["scale_factor"] = 1.0
+        st.session_state["keep_aspect"] = True
+        st.session_state["prev_scale_factor"] = None
+        st.session_state["prev_keep_aspect"] = None
+        st.session_state["upload_hash"] = None
+        st.session_state["prev_edit_mode"] = edit_mode
+        st.rerun()
+    else:
+        st.session_state["prev_edit_mode"] = edit_mode
+
+    is_avatar = edit_mode == "Avatar"
+
+    if is_avatar:
+        resource_label = "avatar"
+        current_url = avatar_cdn_url(final_name)
+    else:
+        resource_label = "sprite"
+        current_url = sprite_cdn_url(final_name)
+
+    cache_name = sprite_cache_filename(current_url)
+    orig_w, orig_h = get_original_sprite_size(current_url)
+
+    st.header(f"Step 2 · Upload new {resource_label} for **{final_name}**")
+    if is_avatar:
+        st.caption(
+            f"This will replace the profile avatar for: **{final_name}**.\n\n"
+            "Avatars are always **50×50px**. We'll resize your upload automatically."
+        )
+    else:
+        st.caption(
+            f"This will replace the final evolution sprite: **{final_name}**.\n\n"
+            "Download the encrypted file and drop it into your `sprites` folder. "
+            "Keep the filename exactly as is."
+        )
+
+    col_left, col_right = st.columns(2)
+
+    # Left column: current sprite/avatar info
+    with col_left:
+        st.subheader(f"Current in-game {resource_label}")
+        canvas_size = (256, 256) if not is_avatar else (128, 128)
+        final_img = load_sprite_on_canvas(current_url, canvas_size=canvas_size)
+        st.image(final_img, caption=f"{final_name if not is_avatar else final_name}", width='stretch')
+        if is_avatar:
+            st.caption("Original avatar size: 50×50px")
+        else:
+            st.caption(f"Original sprite size: {orig_w}×{orig_h}px")
+        st.info(
+            f"Game cache filename for this {resource_label}:\n`{cache_name}`",
+            icon="💾",
+        )
+
+    # Right column: upload + controls + download
+    with col_right:
+        st.subheader("Your replacement art")
+
+        uploaded_bytes = st.session_state.get("uploaded_image_bytes")
+        uploaded_name = st.session_state.get("uploaded_image_name")
+
+        if uploaded_bytes is None:
+            new_file = st.file_uploader(
+                "Upload PNG/JPG (we'll resize and encode it for you)",
+                type=["png", "jpg", "jpeg"],
+            )
+            if new_file is not None:
+                uploaded_bytes = new_file.read()
+                st.session_state["uploaded_image_bytes"] = uploaded_bytes
+                st.session_state["uploaded_image_name"] = new_file.name
+                # Reset dependent state
+                st.session_state["resized_path"] = None
+                st.session_state["patched_path"] = None
+                st.session_state["patched_bytes"] = None
+                st.session_state["needs_reencode"] = True
+                st.session_state["prev_scale_factor"] = None
+                st.session_state["prev_keep_aspect"] = None
+                st.session_state["upload_hash"] = None
+                st.session_state["scale_factor"] = 1.0
+                st.session_state["keep_aspect"] = True
+                st.rerun()
+
+        patched_bytes = None
+
+        if uploaded_bytes is not None:
+            img = Image.open(BytesIO(uploaded_bytes)).convert("RGBA")
+
+            # --- Compute resized image first ---
+            if is_avatar:
+                # Force 50×50, no size controls
+                target_w, target_h = 50, 50
+                img_resized = img.resize((target_w, target_h), Image.LANCZOS)
+                scale_factor = 1.0
+                keep_aspect = True
+            else:
+                # Use current size settings from state
+                scale_factor = st.session_state.get("scale_factor", 1.0)
+                keep_aspect = st.session_state.get("keep_aspect", True)
+
+                # Detect if size or source image changed, to trigger re-encode
+                current_hash = hashlib.sha256(uploaded_bytes).hexdigest()
+                prev_scale = st.session_state.get("prev_scale_factor")
+                prev_keep = st.session_state.get("prev_keep_aspect")
+                prev_hash = st.session_state.get("upload_hash")
+
+                if (
+                    prev_scale is None
+                    or prev_keep is None
+                    or prev_hash is None
+                    or scale_factor != prev_scale
+                    or keep_aspect != prev_keep
+                    or current_hash != prev_hash
+                ):
+                    st.session_state["needs_reencode"] = True
+                    st.session_state["prev_scale_factor"] = scale_factor
+                    st.session_state["prev_keep_aspect"] = keep_aspect
+                    st.session_state["upload_hash"] = current_hash
+
+                # Calculate new dimensions using original sprite size as baseline
+                if orig_w == 50 and orig_h == 50:
+                    # Special-case tiny 50x50 sprites
+                    target_w, target_h = 50, 50
+                else:
+                    if keep_aspect:
+                        # Match original HEIGHT * scale, adjust width by replacement's aspect ratio
+                        aspect_ratio = img.width / img.height
+                        target_h = int(orig_h * scale_factor)
+                        target_w = int(target_h * aspect_ratio)
+                    else:
+                        # Stretch based on the original WIDTH/HEIGHT * scale
+                        target_w = int(orig_w * scale_factor)
+                        target_h = int(orig_h * scale_factor)
+
+                img_resized = img.resize((target_w, target_h), Image.LANCZOS)
+
+            # Save resized sprite/avatar
+            resized_path = workdir / f"{(final_name if not is_avatar else first_name).replace(' ', '_')}.resized.png"
+            img_resized.save(resized_path)
+            st.session_state["resized_path"] = str(resized_path)
+
+            # Display preview centered in a fixed-size canvas so it stays in the container
+            preview_canvas_size = (256, 256) if not is_avatar else (128, 128)
+            preview_canvas = place_on_canvas(img_resized, canvas_size=preview_canvas_size)
+            # For avatars we don't show the size in the image caption so that
+            # the filename and final size text can appear in the desired order below.
+            if is_avatar:
+                st.image(
+                    preview_canvas,
+                    width='stretch',
+                )
+            else:
+                st.image(
+                    preview_canvas,
+                    caption=(
+                        f"Final size: {target_w}×{target_h}px "
+                        f"(original: {orig_w}×{orig_h}px)"
+                    ),
+                    width='stretch',
+                )
+
+
+            # File name and controls now sit *below* the preview for better alignment
+            if uploaded_name:
+                st.caption(uploaded_name)
+
+            if is_avatar:
+                st.caption("Final avatar size: 50×50px")
+                st.caption("Avatar will be encoded at 50×50px.")
+            else:
+                st.markdown("#### 📏 Size")
+                col_slider, col_checkbox = st.columns([4, 2])
+                with col_slider:
+                    new_scale = st.slider(
+                        "Size multiplier",
+                        min_value=0.5,
+                        max_value=2.0,
+                        value=scale_factor,
+                        step=0.1,
+                        help="1.0 = original height. 2.0 = double height.",
+                    )
+                with col_checkbox:
+                    new_keep = st.checkbox(
+                        "Keep landscape shape",
+                        value=keep_aspect,
+                        help="If checked, we only match the height and let the width follow the image's aspect ratio.",
+                    )
+
+                # If the user changed size settings, store them and rerun
+                if new_scale != scale_factor or new_keep != keep_aspect:
+                    st.session_state["scale_factor"] = new_scale
+                    st.session_state["keep_aspect"] = new_keep
                     st.rerun()
 
-    if st.button("⬅️ Back to Upload"):
-        import shutil
 
-        # Delete the whole working directory (all encrypted + decoded files)
-        workdir = Path(st.session_state["workdir"])
-        shutil.rmtree(workdir, ignore_errors=True)
+            # Encode automatically whenever resized image changes
+            resized_path_str = st.session_state.get("resized_path")
+            if resized_path_str is not None and Path(resized_path_str).exists():
+                resized_path = Path(resized_path_str)
+                patched_bytes = st.session_state.get("patched_bytes")
 
-        # Create a fresh empty workdir
-        new_dir = tempfile.mkdtemp(prefix="miscrits_sprites_")
-        st.session_state["workdir"] = new_dir
+                needs_reencode = st.session_state.get("needs_reencode", False)
+                if is_avatar:
+                    # For avatars, re-encode whenever the uploaded image changes
+                    current_hash = hashlib.sha256(uploaded_bytes).hexdigest()
+                    prev_hash = st.session_state.get("upload_hash")
+                    if prev_hash is None or current_hash != prev_hash:
+                        needs_reencode = True
+                        st.session_state["upload_hash"] = current_hash
 
-        # Reset all sprite-related state
-        st.session_state["decoded_sprites_meta"] = []
-        st.session_state["selected_idx"] = None
+                if needs_reencode or patched_bytes is None:
+                    patched_path = workdir / cache_name
+                    with st.spinner("Encrypting for the game..."):
+                        cmd = [
+                            str(GODOT_BIN),
+                            "--headless",
+                            "--script",
+                            str(ENCODE_SCRIPT),
+                            "--",
+                            str(resized_path),
+                            str(patched_path),
+                        ]
+                        res = subprocess.run(cmd, capture_output=True, text=True)
+
+                    if res.returncode != 0 or not patched_path.exists():
+                        st.error("Encoding failed. Please try again.")
+                        st.session_state["patched_bytes"] = None
+                    else:
+                        with open(patched_path, "rb") as f:
+                            patched_bytes = f.read()
+                        st.session_state["patched_bytes"] = patched_bytes
+                        st.session_state["needs_reencode"] = False
+
+            patched_bytes = st.session_state.get("patched_bytes")
+            if patched_bytes:
+                col_dl, col_restart = st.columns([2, 1])
+                with col_dl:
+                    st.download_button(
+                        label="⬇️ Download encrypted sprite" if not is_avatar else "⬇️ Download encrypted avatar",
+                        data=patched_bytes,
+                        file_name=cache_name,
+                        mime="application/octet-stream",
+                        type="primary",
+                        help="Save this file, then drop it into your sprites folder.",
+                    )
+                with col_restart:
+                    if st.button("🔄 Start over (same Miscrit)"):
+                        # Delete only temp files for this edit, keep selection
+                        workdir = Path(st.session_state["workdir"])
+                        for pattern in ("*.patched", "*.resized.png", "*.replacement.png"):
+                            for f in workdir.glob(pattern):
+                                try:
+                                    f.unlink()
+                                except FileNotFoundError:
+                                    pass
+                        st.session_state["patched_path"] = None
+                        st.session_state["resized_path"] = None
+                        st.session_state["uploaded_image_bytes"] = None
+                        st.session_state["uploaded_image_name"] = None
+                        st.session_state["patched_bytes"] = None
+                        st.session_state["needs_reencode"] = False
+                        st.session_state["scale_factor"] = 1.0
+                        st.session_state["keep_aspect"] = True
+                        st.session_state["prev_scale_factor"] = None
+                        st.session_state["prev_keep_aspect"] = None
+                        st.session_state["upload_hash"] = None
+                        st.rerun()
+
+
+    st.divider()
+    if st.button("⬅️ Back to Miscrits"):
+        # Clear workdir/cache like the original app's Back behaviour
+        reset_workdir()
+        st.session_state["selected_miscrit"] = None
+        st.session_state["patched_path"] = None
         st.session_state["resized_path"] = None
-
-        # Go back to upload step
+        st.session_state["uploaded_image_bytes"] = None
+        st.session_state["uploaded_image_name"] = None
+        st.session_state["patched_bytes"] = None
+        st.session_state["needs_reencode"] = False
+        st.session_state["scale_factor"] = 1.0
+        st.session_state["keep_aspect"] = True
+        st.session_state["prev_scale_factor"] = None
+        st.session_state["prev_keep_aspect"] = None
+        st.session_state["upload_hash"] = None
         st.session_state["step"] = 1
         st.rerun()
-
 # =====================================================================
-# STEP 3: REPLACE ART
+# FOOTER
 # =====================================================================
-elif st.session_state["step"] == 3:
-    idx = st.session_state["selected_idx"]
-    _, full_name, _, original_png = decoded_sprites[idx]
-    
-    # Load original dims
-    orig_img_obj = Image.open(original_png)
-    orig_w, orig_h = orig_img_obj.size
 
-    st.header(f"Step 3: Edit `{short_name(full_name)}`")
-    
-    # 1. Upload Section First (Keeps UI stable)
-    new_file = st.file_uploader("Upload Replacement Art (PNG/JPG)", type=["png", "jpg", "jpeg"])
-    
-    st.divider()
-
-    # 2. Comparison Grid
-    col_left, col_right = st.columns(2)
-    
-    with col_left:
-        st.subheader("Original")
-        with st.container(border=True):
-            st.image(str(original_png), width='stretch')
-            st.caption(f"Size: {orig_w}x{orig_h}px")
-
-    with col_right:
-            st.subheader("Replacement")
-            with st.container(border=True):
-                if new_file:
-                    # Process immediate
-                    save_path = workdir / f"{full_name}.replacement.png"
-                    with open(save_path, "wb") as f:
-                        f.write(new_file.getbuffer())
-                    
-                    # --- NEW RESIZE LOGIC START ---
-                    st.markdown("#### 📏 Size Controls")
-                    scale_factor = st.slider(
-                        "Size Multiplier", 
-                        min_value=0.5, 
-                        max_value=2.0, 
-                        value=1.0, 
-                        step=0.1,
-                        help="1.0 = Original height. 2.0 = Double size."
-                    )
-                    keep_aspect = st.checkbox("Keep Landscape Shape?", value=True, help="If checked, we only match the height and let the width be whatever it needs to be.")
-
-                    img = Image.open(save_path).convert("RGBA")
-                    
-                    # Calculate new dimensions
-                    if orig_w == 50 and orig_h == 50:
-                        # Force 50x50 if decrypted/original sprite was 50x50
-                        target_w, target_h = 50, 50
-                    else:
-                        if keep_aspect:
-                            # Logic: Match the Original Height * Scale, and calculate Width automatically
-                            aspect_ratio = img.width / img.height
-                            target_h = int(orig_h * scale_factor)
-                            target_w = int(target_h * aspect_ratio)
-                        else:
-                            # Logic: Stretch both dimensions based on Original * Scale
-                            target_w = int(orig_w * scale_factor)
-                            target_h = int(orig_h * scale_factor)
-
-                    img_resized = img.resize((target_w, target_h), Image.LANCZOS)
-                    # --- NEW RESIZE LOGIC END ---
-
-                    resized_save_path = workdir / f"{full_name}.resized.png"
-                    img_resized.save(resized_save_path)
-                    st.session_state["resized_path"] = str(resized_save_path)
-                    
-                    st.image(img_resized, width='stretch')
-                    st.caption(f"Final Size: {target_w}x{target_h}px (Original: {orig_w}x{orig_h})")
-                else:
-                    st.info("Waiting for upload...")
-                    # Placeholder to keep grid aligned
-                    st.image("https://placehold.co/200x200?text=Preview", width='stretch')
-    st.divider()
-
-    # Action Buttons
-    if new_file:
-        if st.button("⚡ Encode & Finish", type="primary"):
-            st.session_state["step"] = 4
-            st.rerun()
-    
-    if st.button("⬅️ Choose different sprite"):
-        st.session_state["step"] = 2
-        st.rerun()
-
-# =====================================================================
-# STEP 4: DOWNLOAD
-# =====================================================================
-elif st.session_state["step"] == 4:
-    idx = st.session_state["selected_idx"]
-    _, full_name, _, _ = decoded_sprites[idx]
-    resized_path = st.session_state.get("resized_path")
-
-    st.header("Step 4: Download Patched File")
-    
-    patched_path = workdir / f"{full_name}.patched"
-    
-    # Perform Encoding
-    if not patched_path.exists():
-        with st.spinner("Encrypting for Godot engine..."):
-            cmd = [str(GODOT_BIN), "--headless", "--script", str(ENCODE_SCRIPT), "--", str(resized_path), str(patched_path)]
-            res = subprocess.run(cmd, capture_output=True, text=True)
-            
-            if res.returncode != 0:
-                st.error("Encoding failed!")
-                st.code(res.stderr)
-                st.stop()
-
-    
-    with open(patched_path, "rb") as f:
-        file_data = f.read()
-        
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        st.success("✅ **Sprite Patched Successfully! Place this file back into your sprites folder.**")
-        st.download_button(
-            label="⬇️ Download Encrypted File",
-            data=file_data,
-            file_name=full_name,
-            mime="application/octet-stream",
-            type="primary",
-            help="Place this file back into your sprites folder"
-        )
-    
-    st.divider()
-    if st.button("🔄 Start Over (Edit another sprite)"):
-        # --- DELETE ONLY RE-ENCRYPTED / TEMP OUTPUT FILES ---
-        workdir = Path(st.session_state["workdir"])
-
-        # Remove any patched (re-encrypted) files so we don't accidentally reuse them
-        for f in workdir.glob("*.patched"):
-            try:
-                f.unlink()
-            except FileNotFoundError:
-                pass
-
-        # Optional but tidy: remove per-edit temp images
-        for f in workdir.glob("*.replacement.png"):
-            try:
-                f.unlink()
-            except FileNotFoundError:
-                pass
-
-        for f in workdir.glob("*.resized.png"):
-            try:
-                f.unlink()
-            except FileNotFoundError:
-                pass
-
-        # Reset per-edit state, but KEEP decoded_sprites_meta
-        st.session_state["resized_path"] = None
-        st.session_state["selected_idx"] = None
-
-        # Jump back to sprite-selection step, using the same decoded sprites
-        st.session_state["step"] = 2
-        st.rerun()
-
-
-
-# --- Final info ------------------------------------------------------------
 st.info(
-    "Reminder: these replacements only work for crits currently in your party "
-    "and will reset if you clear your sprites folder again."
+    "These replacements work per cache file. If you clear your sprites folder, "
+    "you'll need to place the patched file back in again."
 )
