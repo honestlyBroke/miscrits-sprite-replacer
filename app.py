@@ -176,6 +176,24 @@ def reset_workdir():
     st.session_state["workdir"] = new_dir
     return Path(new_dir)
 
+def show_pil_via_file(
+    img: Image.Image,
+    filename: str,
+    *,
+    caption: str | None = None,
+    use_container_width: bool = False,
+) -> None:
+    """Save a PIL image to the workdir and display it via file path.
+
+    This avoids Streamlit's in-memory media store, which is what causes
+    the 'Missing file <hex>.png' MediaFileStorageError spam.
+    """
+    workdir = Path(st.session_state.get("workdir", tempfile.gettempdir()))
+    workdir.mkdir(parents=True, exist_ok=True)
+    path = workdir / filename
+    img.save(path)
+    st.image(str(path), caption=caption, use_container_width=use_container_width)
+
 
 # =====================================================================
 # State Management
@@ -370,7 +388,11 @@ if st.session_state["step"] == 1:
 
                     # Draw sprite on a fixed-size canvas so every card is the same height
                     sprite_img = load_sprite_on_canvas(sprite_url, canvas_size=(256, 256))
-                    st.image(sprite_img, width='stretch')
+                    show_pil_via_file(
+                        sprite_img,
+                        f"grid_{m['id']}.png",
+                        use_container_width=True,
+                    )
 
                     # Meta row
                     st.caption(f"{m['element']} • {m['rarity']}")
@@ -566,20 +588,27 @@ elif st.session_state["step"] == 2:
             preview_canvas = place_on_canvas(img_resized, canvas_size=preview_canvas_size)
             # For avatars we don't show the size in the image caption so that
             # the filename and final size text can appear in the desired order below.
+            # Display preview centered in a fixed-size canvas so it stays in the container
+            preview_canvas_size = (256, 256) if not is_avatar else (128, 128)
+            preview_canvas = place_on_canvas(img_resized, canvas_size=preview_canvas_size)
+
             if is_avatar:
-                st.image(
+                show_pil_via_file(
                     preview_canvas,
-                    width='stretch',
+                    "preview_avatar.png",
+                    use_container_width=True,
                 )
             else:
-                st.image(
+                show_pil_via_file(
                     preview_canvas,
+                    "preview_sprite.png",
                     caption=(
                         f"Final size: {target_w}×{target_h}px "
                         f"(original: {orig_w}×{orig_h}px)"
                     ),
-                    width='stretch',
+                    use_container_width=True,
                 )
+
 
 
             # File name and controls now sit *below* the preview for better alignment
