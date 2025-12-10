@@ -88,6 +88,25 @@ section[data-testid="stSidebar"] {
         padding-right: 1.5rem;
     }
 }
+
+/* Hide the sidebar toggle button (hamburger / collapse) */
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+
+/* Keep sidebar visible on desktop */
+section[data-testid="stSidebar"] {
+    width: 500px !important;
+    min-width: 500px !important;
+}
+
+.replace-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #FFF7AA;
+    margin-bottom: 0.25rem;
+}
+
 </style>
 """
 
@@ -517,13 +536,19 @@ elif st.session_state["step"] == 2:
     first_name = m["first_name"]
     final_name = m["final_name"]
 
-    # Toggle between editing final evolution sprite or avatar
+    st.markdown(
+        '<p class="replace-label">What do you want to replace?</p>',
+        unsafe_allow_html=True,
+    )
+    
     edit_mode = st.radio(
-        "What do you want to replace?",
+        "",
         ["Sprite", "Avatar"],
         horizontal=True,
         index=0 if st.session_state.get("edit_mode", "Sprite") == "Sprite" else 1,
     )
+
+
     st.session_state["edit_mode"] = edit_mode
 
     prev_mode = st.session_state.get("prev_edit_mode", "Sprite")
