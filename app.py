@@ -434,10 +434,24 @@ if st.session_state["step"] == 1:
     # --- Apply filtering ---
     filtered = []
     for m in catalog:
-        # Search by first or final evo name
+        # Search by first/final evo name + rarity (+ small aliases)
         if search_term:
-            s = search_term.lower()
-            if s not in m["first_name"].lower() and s not in m["final_name"].lower():
+            s = search_term.strip().lower()
+        
+            # Allow short aliases
+            aliases = {
+                "gb": "global boss",
+                "globalboss": "global boss",
+            }
+            s = aliases.get(s, s)
+        
+            haystack = " ".join([
+                m.get("first_name", ""),
+                m.get("final_name", ""),
+                m.get("rarity", ""),      # so "global boss" matches
+            ]).lower()
+        
+            if s not in haystack:
                 continue
 
         if rarity_filter and m["rarity"] not in rarity_filter:
