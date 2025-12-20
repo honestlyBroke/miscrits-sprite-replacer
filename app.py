@@ -618,7 +618,13 @@ elif st.session_state["step"] == 2:
         st.subheader(f"Current in-game {resource_label}")
         canvas_size = (256, 256) if not is_avatar else (128, 128)
         final_img = load_sprite_on_canvas(current_url, canvas_size=canvas_size)
-        st.image(final_img, caption=f"{final_name if not is_avatar else final_name}", width='stretch')
+        show_pil_via_file(
+            final_img,
+            f"current_{resource_label}_{cache_name}.png",
+            caption=final_name,
+            width="stretch",
+        )
+
         if is_avatar:
             st.caption("Original avatar size: 50×50px")
         else:
