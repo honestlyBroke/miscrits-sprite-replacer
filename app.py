@@ -556,11 +556,13 @@ elif st.session_state["step"] == 2:
     )
     
     edit_mode = st.radio(
-        "",
+        "Edit mode",
         ["Sprite", "Avatar"],
         horizontal=True,
+        label_visibility="collapsed",
         index=0 if st.session_state.get("edit_mode", "Sprite") == "Sprite" else 1,
     )
+
 
 
     st.session_state["edit_mode"] = edit_mode
