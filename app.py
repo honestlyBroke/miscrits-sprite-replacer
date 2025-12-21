@@ -7,8 +7,17 @@ import json
 import requests
 from io import BytesIO
 import shutil
+from typing import Literal, Union
 
 import streamlit as st
+
+import logging
+
+# Silence noisy 'Missing file <media_id>.png' tracebacks that can occur when the browser
+# requests a stale /media/<id>.png during reruns/hot-reload. This does not affect app behavior.
+logging.getLogger('streamlit.web.server.media_file_handler').setLevel(logging.CRITICAL)
+logging.getLogger('streamlit.runtime.memory_media_file_storage').setLevel(logging.CRITICAL)
+
 from PIL import Image
 
 # =====================================================================
@@ -16,97 +25,103 @@ from PIL import Image
 # =====================================================================
 MISCRITS_CSS = """
 <style>
-/* Make the whole app feel less “boxy” */
-main .block-container {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+/* ==== Base reset (from provided CSS) ==== */
+*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
+:before,:after{--tw-content:""}
+html,body{margin:0;line-height:1.5;font-family:BorisBlackBloxx,sans-serif;-webkit-text-size-adjust:100%}
+img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}
+img,video{max-width:100%;height:auto}
+
+/* ==== Theme tokens (from provided CSS) ==== */
+:root{
+  --background: 0 0% 0%;
+  --foreground: 72 50% 49%;
+  --card: 0 0% 5%;
+  --card-foreground: 72 50% 49%;
+  --popover: 0 0% 0%;
+  --popover-foreground: 72 50% 49%;
+  --primary: 72 50% 49%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 0%;
+  --secondary-foreground: 72 50% 49%;
+  --muted: 0 0% 10%;
+  --muted-foreground: 72 50% 39%;
+  --accent: 72 50% 49%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 72 50% 49%;
+  --input: 72 50% 49%;
+  --ring: 72 50% 49%;
+  --radius: .5rem;
 }
 
-/* Card-like containers */
-div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div {
-    border-radius: 16px;
+/* Apply theme */
+body{
+  overflow-x:hidden;
+  background-color: rgb(0 0 0 / 1);
+  color: rgb(165 188 62 / 1);
+  font-family:BorisBlackBloxx,sans-serif;
+  font-feature-settings:"rlig" 1,"calt" 1;
+}
+*{border-color:hsl(var(--border))}
+
+/* Scrollbar (from provided CSS) */
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background-color:rgb(0 0 0 / 1)}
+::-webkit-scrollbar-thumb{border-radius:9999px;background-color:rgb(165 188 62 / 1)}
+::-webkit-scrollbar-thumb:hover{background-color:rgb(131 150 48 / 1)}
+
+/* Utility classes used by the app */
+.container{width:100%;margin-right:auto;margin-left:auto;padding-right:2rem;padding-left:2rem}
+@media (min-width:1400px){.container{max-width:1400px}}
+
+.glass-card{
+  border-radius:var(--radius);
+  border-width:1px;
+  border-color:#a5bc3e66;
+  background-color:#000000b3;
+  padding:1.5rem;
+  box-shadow:0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.neon-border{
+  border-radius:var(--radius);
+  border-width:2px;
+  border-color:rgb(165 188 62 / 1);
+  box-shadow:0 0 10px rgba(165,188,62,.7);
+}
+.yellow-border{
+  border-radius:var(--radius);
+  border-width:2px;
+  border-color:rgb(239 191 75 / 1);
+  box-shadow:0 0 10px rgba(239,191,75,.7);
+}
+.heading-1{
+  font-family:BorisBlackBloxx,sans-serif;
+  font-size:2.25rem;
+  line-height:2.5rem;
+  color:#fff;
+  filter: drop-shadow(0 0 8px rgba(165,188,62,.5));
+}
+@media (min-width:768px){.heading-1{font-size:3rem;line-height:1}}
+@media (min-width:1024px){.heading-1{font-size:3.75rem;line-height:1}}
+.heading-2{
+  font-family:Miscria,sans-serif;
+  font-size:1.875rem;
+  line-height:2.25rem;
+  color:rgb(165 188 62 / 1);
+}
+.heading-yellow{
+  font-family:Miscria,sans-serif;
+  font-size:1.875rem;
+  line-height:2.25rem;
+  color:rgb(239 191 75 / 1);
 }
 
-/* Buttons: pill style with golden fill */
-.stButton button {
-    border-radius: 999px;
-    border: 2px solid #FFC842;
-    background: #FFC842;
-    color: #2A1C0E;
-    font-weight: 700;
-}
-
-/* Small pill buttons (e.g. filters) look better slightly smaller */
-.stButton > button:hover:not(:disabled) {
-    background-color: #FFD451;      /* slightly lighter gold */
-    color: #2A1C0E;
-    border-color: #FFC842;
-}
-
-
-/* Chips / badge-like labels can use markdown with this class if you want */
-.miscrit-chip {
-    display: inline-block;
-    padding: 0.15rem 0.75rem;
-    border-radius: 999px;
-    background: #2A1C0E;
-    color: #FFE7AA;
-    border: 1px solid #FFC842;
-    font-size: 0.8rem;
-}
-
-/* === Sidebar "How this tool works" box === */
-.sidebar-box {
-    background: #1D1510;        /* dark card background */
-    border: 2px solid #FFC842;  /* gold border */
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    color: #FFE7AA;
-}
-.sidebar-box h3 {
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-    color: #FFC842;
-    font-weight: 700;
-}
-.sidebar-box ol {
-    padding-left: 1.25rem;
-}
-.sidebar-box li {
-    margin-bottom: 0.35rem;
-}
-/* Wider sidebar (Miscripedia-style) */
-section[data-testid="stSidebar"] {
-    width: 500px !important;      /* adjust this value to taste */
-    min-width: 500px !important;
-}
-
-/* Make main area account for wider sidebar on large screens */
-@media (min-width: 1024px) {
-    main.block-container {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-    }
-}
-
-/* Hide the sidebar toggle button (hamburger / collapse) */
-[data-testid="collapsedControl"] {
-    display: none !important;
-}
-
-/* Keep sidebar visible on desktop */
-section[data-testid="stSidebar"] {
-    width: 500px !important;
-    min-width: 500px !important;
-}
-
-.replace-label {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #FFF7AA;
-    margin-bottom: 0.25rem;
-}
-
+/* Streamlit component adjustments (keep minimal) */
+main .block-container{padding-top:2rem;padding-bottom:2rem}
 </style>
 """
 
@@ -122,6 +137,8 @@ FAVICON_PATH = ROOT / "assets" / "favicon.ico"
 
 # Stripped catalog: id, element, rarity, first_name, final_name
 MISCRIT_CATALOG_PATH = ROOT / "assets" / "miscrits_first_final_names.json"
+
+BOSSES_CATALOG_PATH = ROOT / "assets" / "bosses.json"
 
 PAGE_SIZE = 16  # how many Miscrits to render at once
 
@@ -160,6 +177,17 @@ def local_css():
         unsafe_allow_html=True,
     )
 
+def display_name(raw: str) -> str:
+    """
+    Convert internal names like:
+    - 'magicite_novice' -> 'Magicite Novice'
+    - 'ylil nosaj' -> 'Ylil Nosaj'
+    - 'FireWind' -> 'Firewind' (not used for names, but safe)
+    """
+    if not raw:
+        return ""
+
+    return raw.replace("_", " ").title()
 
 def short_name(name: str, max_len: int = 14) -> str:
     if len(name) <= max_len:
@@ -174,24 +202,27 @@ def load_miscrit_catalog():
     with open(MISCRIT_CATALOG_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
+@st.cache_data
+def load_boss_catalog():
+    if not BOSSES_CATALOG_PATH.exists():
+        return []
+    with open(BOSSES_CATALOG_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 ELEMENT_ICON_BASE = "https://worldofmiscrits.com"
-BASE_ELEMENTS = ["Fire", "Water", "Nature", "Wind", "Earth", "Lightning"]
-
-
-def base_element(element: str) -> str:
-    """
-    For dual-types like 'FireWind', pick the first matching base element.
-    """
-    for k in BASE_ELEMENTS:
-        if element.startswith(k):
-            return k
-    return element
-
 
 def element_icon_url(element: str) -> str:
-    base = base_element(element)
-    return f"{ELEMENT_ICON_BASE}/{base.lower()}.png"
+    """
+    Rules:
+    - Physical => physical.png
+    - Dual elements (FireWind) => firewind.png
+    - Single elements (Fire) => fire.png
+    """
+    if not element:
+        return ""
+
+    slug = element.strip().lower().replace(" ", "")
+    return f"{ELEMENT_ICON_BASE}/{slug}.png"
 
 
 def sprite_cdn_url(name: str) -> str:
@@ -235,7 +266,7 @@ def load_sprite_on_canvas(url: str, canvas_size=(256, 256)):
     img = Image.open(BytesIO(resp.content)).convert("RGBA")
 
     # Scale down to fit inside canvas while preserving aspect ratio
-    img.thumbnail(canvas_size, Image.LANCZOS)
+    img.thumbnail(canvas_size, Image.LANCZOS) # type: ignore
 
     # Center on a transparent canvas
     canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
@@ -282,7 +313,8 @@ def show_pil_via_file(
     filename: str,
     *,
     caption: str | None = None,
-    width: str = "stretch",  # "stretch" or "content"
+    # Use Literal to restrict the string to values Streamlit expects
+    width: Union[int, Literal["stretch", "content"]] = "stretch",
 ) -> None:
     """Save a PIL image to the workdir and display it via file path."""
     workdir = Path(st.session_state.get("workdir", tempfile.gettempdir()))
@@ -328,17 +360,17 @@ workdir = Path(st.session_state["workdir"])
 
 with st.sidebar:
     st.title("🎮 Sprite Replacer")
-    
+
     st.markdown(
         """
         <div class="sidebar-box">
             <h3>How this tool works:</h3>
             <ol>
-                <li>Pick a Miscrit from the Miscrits grid.</li>
+                <li>Pick a Miscrit or Boss from the grid.</li>
                 <li>Choose whether you want to replace the <b>Sprite</b> or the <b>Avatar</b>.</li>
                 <li>Upload your replacement image and resize it if needed.</li>
-                <li>Download the encrypted cache file.</li>
-                <li>Drop that file into the correct folder and overwrite the existing file.</li>
+                <li>Download the generated encrypted cache file.</li>
+                <li>Drop that file into the correct folder and overwrite the existing one.</li>
             </ol>
         </div>
         """,
@@ -347,35 +379,34 @@ with st.sidebar:
 
     st.markdown("### 📁 Where to put the file")
     st.markdown(
-        """
+        r"""
 **Windows path (copy-paste into Explorer):**
 
-- If you are editing **Sprite**:
-
+- **If you are editing a Sprite:**
 ```text
-%USERPROFILE%\\AppData\\Roaming\\Godot\\app_userdata\\Miscrits\\image_cache\\sprites
+%USERPROFILE%\AppData\Roaming\Godot\app_userdata\Miscrits\image_cache\sprites
 ```
 
-- If you are editing **Avatar**:
-
+- **If you are editing an Avatar:**
 ```text
-%USERPROFILE%\\AppData\\Roaming\\Godot\\app_userdata\\Miscrits\\image_cache\\miscrits
+%USERPROFILE%\AppData\Roaming\Godot\app_userdata\Miscrits\image_cache\miscrits
 ```
 
-Once you're there:
+**Once you’re there:**
 
-1. Sort the folder by **Date modified** so the newest file is on top.  
-2. Make sure the filename matches **exactly** the one shown in the app (a long hash like `b6b0c2...`).  
-3. Replace the existing file **in place**.  
-   - If Windows adds things like ` (1)` or extra extensions, it will **not** work — rename it back to the exact hash.
-"""
+1. Sort the folder by **Date modified** so the newest file is on top.
+2. Make sure the filename matches **exactly** what the app shows (a long hash like `b6b0c2...`).
+3. Replace the existing file **in place**.
+4. ⚠️ If Windows adds `(1)` or extra extensions, it will **not** work — rename it back to the exact hash.
+""",
+        unsafe_allow_html=False,
     )
 
     st.markdown("### 🎥 Tutorial Video")
-    st.video("assets/spriteguide-real-2.mp4")
+    if (ROOT / "assets" / "spriteguide-real-2.mp4").exists():
+        st.video("assets/spriteguide-real-2.mp4")
 
     if st.button("🔄 Reset Session", type="secondary"):
-        # Clear everything and reset
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
@@ -386,8 +417,11 @@ Once you're there:
 
 local_css()
 st.title("Miscrits Sprite Tool")
-st.caption("Browse crits by name, element and rarity, then swap the final evo sprite/avatar.")
-
+st.markdown(
+    """
+Browse Miscrits and Bosses by name, element, rarity, or location — then replace their sprite or avatar with your own custom image.
+"""
+)
 
 # --- CHECK BINARY ---
 
@@ -404,26 +438,42 @@ if not ENCODE_SCRIPT.exists():
 # =====================================================================
 
 if st.session_state["step"] == 1:
-    st.header("Step 1: Choose a Miscrit")
+    st.header("Step 1: Choose a Miscrit or Local Boss")
 
-    catalog = load_miscrit_catalog()
+    dataset = st.radio(
+        "Catalog",
+        ["Miscrits", "Bosses"],
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+    st.session_state["dataset"] = dataset
+    if dataset == "Bosses":
+        catalog = load_boss_catalog()
+        search_label = "Search Bosses..."
+        search_ph = "gb, global boss, mizokami, magicite..."
+    else:
+        catalog = load_miscrit_catalog()
+        search_label = "Search Miscrits..."
+        search_ph = "Flue, Flowerpiller, Afterburn..."
     if not catalog:
-        st.error("Could not load miscrits_first_final_names.json")
+        st.error("Could not load bosses.json" if dataset == "Bosses" else "Could not load miscrits_first_final_names.json")
         st.stop()
 
     # --- Search & Filters ---
-    search_term = st.text_input(
-        "Search Miscrits...",
-        placeholder="Flue, Flowerpiller, Afterburn...",
-    )
+    search_term = st.text_input(search_label, placeholder=search_ph)
 
     col_rarity, col_element = st.columns([1, 1])
     all_rarities = sorted({m["rarity"] for m in catalog})
     all_elements = sorted({m["element"] for m in catalog})
+    rarity_label = "All Rarities" if dataset == "Miscrits" else "All Locations"
+    rarity_placeholder = "Select rarities" if dataset == "Miscrits" else "Select locations"
 
     with col_rarity:
         rarity_filter = st.multiselect(
-            "All Rarities", all_rarities, default=None
+            rarity_label,
+            all_rarities,
+            default=None,
+            placeholder=rarity_placeholder,
         )
 
     with col_element:
@@ -503,9 +553,21 @@ if st.session_state["step"] == 1:
                     with c1:
                         st.image(icon_url, width='stretch')
                     with c2:
-                        st.markdown(f"**{m['first_name']}**")
-                        st.caption(f"Final: {m['final_name']}")
+                        title = display_name(m["first_name"])
 
+                        margin = "15px" if dataset == "Bosses" else "5px"
+                        font_size = "18px" if dataset == "Bosses" else "15px"
+
+                        st.markdown(
+                            f"<div style='margin-top: {margin}; font-weight: 700; font-size: {font_size};'>"
+                            f"{title}"
+                            f"</div>",
+                            unsafe_allow_html=True,
+                        )
+
+
+                        if dataset == "Miscrits":
+                            st.caption(f"Final: {display_name(m['final_name'])}")
                     # Sprite preview = FIRST evo back sprite
                     sprite_url = sprite_cdn_url(m["first_name"])
 
@@ -519,10 +581,10 @@ if st.session_state["step"] == 1:
 
                     # Meta row
                     st.caption(f"{m['element']} • {m['rarity']}")
-
+                    btn_label = "Change Sprite" if dataset == "Miscrits" else "Change Boss Sprite"
                     # Select button
                     if st.button(
-                        "Change Sprite",
+                        btn_label,
                         key=f"sel_{m['id']}",
                         type="primary",
                         width='stretch',
@@ -598,7 +660,7 @@ elif st.session_state["step"] == 2:
     cache_name = sprite_cache_filename(current_url)
     orig_w, orig_h = get_original_sprite_size(current_url)
 
-    st.header(f"Step 2 · Upload new {resource_label} for **{final_name}**")
+    st.header(f"Step 2 · Upload new {resource_label} for **{display_name(final_name)}**")
     if is_avatar:
         st.caption(
             f"This will replace the profile avatar for: **{final_name}**.\n\n"
@@ -671,7 +733,7 @@ elif st.session_state["step"] == 2:
             if is_avatar:
                 # Force 50×50, no size controls
                 target_w, target_h = 50, 50
-                img_resized = img.resize((target_w, target_h), Image.LANCZOS)
+                img_resized = img.resize((target_w, target_h), Image.LANCZOS)# type: ignore
                 scale_factor = 1.0
                 keep_aspect = True
             else:
@@ -713,7 +775,7 @@ elif st.session_state["step"] == 2:
                         target_w = int(orig_w * scale_factor)
                         target_h = int(orig_h * scale_factor)
 
-                img_resized = img.resize((target_w, target_h), Image.LANCZOS)
+                img_resized = img.resize((target_w, target_h), Image.LANCZOS)# type: ignore
 
             # Save resized sprite/avatar
             resized_path = workdir / f"{(final_name if not is_avatar else first_name).replace(' ', '_')}.resized.png"
@@ -754,31 +816,34 @@ elif st.session_state["step"] == 2:
 
             if is_avatar:
                 st.caption("Final avatar size: 50×50px")
-                st.caption("Avatar will be encoded at 50×50px.")
             else:
-                st.markdown("#### 📏 Size")
-                col_slider, col_checkbox = st.columns([4, 2])
-                with col_slider:
-                    new_scale = st.slider(
-                        "Size multiplier",
-                        min_value=0.5,
-                        max_value=2.0,
-                        value=scale_factor,
-                        step=0.1,
-                        help="1.0 = original height. 2.0 = double height.",
-                    )
-                with col_checkbox:
-                    new_keep = st.checkbox(
-                        "Keep landscape shape",
-                        value=keep_aspect,
-                        help="If checked, we only match the height and let the width follow the image's aspect ratio.",
-                    )
+                if st.session_state.get("dataset") == "Miscrits":
+                    st.markdown("#### 📏 Size")
+                    col_slider, col_checkbox = st.columns([4, 2])
+                    with col_slider:
+                        new_scale = st.slider(
+                            "Size multiplier",
+                            min_value=0.5,
+                            max_value=2.0,
+                            value=scale_factor,
+                            step=0.1,
+                            help="1.0 = original height. 2.0 = double height.",
+                        )
+                    with col_checkbox:
+                        new_keep = st.checkbox(
+                            "Keep landscape shape",
+                            value=keep_aspect,
+                            help="If checked, we only match the height and let the width follow the image's aspect ratio.",
+                        )
 
-                # If the user changed size settings, store them and rerun
-                if new_scale != scale_factor or new_keep != keep_aspect:
-                    st.session_state["scale_factor"] = new_scale
-                    st.session_state["keep_aspect"] = new_keep
-                    st.rerun()
+                    if new_scale != scale_factor or new_keep != keep_aspect:
+                        st.session_state["scale_factor"] = new_scale
+                        st.session_state["keep_aspect"] = new_keep
+                        st.rerun()
+                else:
+                    # Reserve space so layout does NOT move
+                    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+
 
 
             # Encode automatically whenever resized image changes
