@@ -1,0 +1,18 @@
+[theme]
+# Gold / yellow accent like the buttons & highlights
+primaryColor = "#FFC842"
+
+# Almost-black background like the site
+backgroundColor = "#050507"
+
+# Dark brown-ish card background
+secondaryBackgroundColor = "#1D1510"
+
+# Warm yellow-ish text similar to Miscripedia headings
+textColor = "#FFE7AA"
+
+# Rounded, friendly sans font (Streamlit-supported)
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false

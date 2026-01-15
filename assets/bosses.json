@@ -1,0 +1,23 @@
+[
+  { "id": 9001, "element": "Physical", "rarity": "Forest", "first_name": "magicite_novice", "final_name": "magicite_novice" },
+  { "id": 9002, "element": "Physical", "rarity": "Forest", "first_name": "magicite_neophyte", "final_name": "magicite_neophyte" },
+  { "id": 9003, "element": "Physical", "rarity": "Forest", "first_name": "magicite_adept", "final_name": "magicite_adept" },
+  { "id": 9004, "element": "Nature",   "rarity": "Forest", "first_name": "nature_elementum", "final_name": "nature_elementum" },
+
+  { "id": 9011, "element": "Physical", "rarity": "Mount Gemma", "first_name": "magicite_apprentice", "final_name": "magicite_apprentice" },
+  { "id": 9012, "element": "Physical", "rarity": "Mount Gemma", "first_name": "magicite_general", "final_name": "magicite_general" },
+  { "id": 9013, "element": "Physical", "rarity": "Mount Gemma", "first_name": "magicite_commander", "final_name": "magicite_commander" },
+  { "id": 9014, "element": "Earth",    "rarity": "Mount Gemma", "first_name": "earth_elementum", "final_name": "earth_elementum" },
+
+  { "id": 9021, "element": "Physical", "rarity": "Cave",  "first_name": "elena", "final_name": "elena" },
+  { "id": 9022, "element": "Physical", "rarity": "Shack", "first_name": "ylil nosaj", "final_name": "ylil nosaj" },
+
+  { "id": 9031, "element": "Physical", "rarity": "Shores", "first_name": "magicite_overseer", "final_name": "magicite_overseer" },
+  { "id": 9032, "element": "Physical", "rarity": "Shores", "first_name": "magicite_mastermind", "final_name": "magicite_mastermind" },
+  { "id": 9033, "element": "Physical", "rarity": "Shores", "first_name": "magicite_overlord", "final_name": "magicite_overlord" },
+  { "id": 9034, "element": "Wind",     "rarity": "Shores", "first_name": "wind_elementum", "final_name": "wind_elementum" },
+
+  { "id": 9041, "element": "FireWind", "rarity": "Moon", "first_name": "singularitas", "final_name": "singularitas" },
+
+  { "id": 9050, "element": "Physical", "rarity": "Global Boss", "first_name": "Mizokami", "final_name": "Mizokami" }
+]
