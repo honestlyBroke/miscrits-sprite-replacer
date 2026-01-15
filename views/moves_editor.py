@@ -401,4 +401,5 @@ def render_moves_editor():
             st.success("Ready!")
         
         if st.session_state.get("_export_json"):
-            st.download_button("⬇️ Download .json", data=st.session_state["_export_json"].encode("utf-8"), file_name=f"miscrits_{datetime.now().strftime('%Y%m%d')}.json", mime="application/json", use_container_width=True)
+            # Updated file_name to static 'miscrits.json'
+            st.download_button("⬇️ Download .json", data=st.session_state["_export_json"].encode("utf-8"), file_name="miscrits.json", mime="application/json", use_container_width=True)

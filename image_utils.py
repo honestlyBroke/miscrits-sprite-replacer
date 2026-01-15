@@ -96,9 +96,6 @@ def show_pil_via_file(
     # OPTIMIZATION: Only save if file doesn't exist to reduce disk writes
     workdir.mkdir(parents=True, exist_ok=True)
     path = workdir / filename
-    
-    # We save anyway to ensure the displayed image matches the current state (in case of edits),
-    # but for the grid (which uses constant filenames like grid_123.png) we could skip.
-    # For safety/simplicity in editing, we keep the save, but OS disk caching handles it well.
+
     img.save(path)
-    st.image(str(path), caption=caption, width=width)
+    st.image(img, caption=caption, width=width)
