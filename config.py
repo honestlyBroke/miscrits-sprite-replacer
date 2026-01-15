@@ -9,7 +9,7 @@ import os
 ROOT = Path(__file__).parent.resolve()
 
 # Updated: Point to the Windows executable
-GODOT_BIN = ROOT / "bin" / "Godot_v4.4.1-stable_win64.exe"
+GODOT_BIN = ROOT / "bin" / "Godot_v4.1-stable_linux.x86_64"
 
 ENCODE_SCRIPT = ROOT / "gd_scripts" / "crits_single_encode.gd"
 FAVICON_PATH = ROOT / "assets" / "favicon.ico"
