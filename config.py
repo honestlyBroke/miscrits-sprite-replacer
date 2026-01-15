@@ -15,7 +15,7 @@ if system == "Windows":
 else:
     # Linux (Streamlit Cloud)
     # Ensure this filename matches EXACTLY what you upload to the bin/ folder
-    GODOT_BIN_NAME = "Godot_v4.4.1-stable_linux.x86_64" 
+    GODOT_BIN_NAME = "Godot_v4.1-stable_linux.x86_64" 
 
 GODOT_BIN = ROOT / "bin" / GODOT_BIN_NAME
 
