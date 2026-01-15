@@ -1,15 +1,23 @@
 """
 Configuration constants for the Miscrits Sprite Replacer
-(added MISCRITS_LOCAL_PATH for Move Editor)
 """
 from pathlib import Path
 import os
+import platform
 
 # Paths
 ROOT = Path(__file__).parent.resolve()
 
-# Updated: Point to the Windows executable
-GODOT_BIN = ROOT / "bin" / "Godot_v4.1-stable_linux.x86_64"
+# Determine OS and select correct binary
+system = platform.system()
+if system == "Windows":
+    GODOT_BIN_NAME = "Godot_v4.4.1-stable_win64.exe"
+else:
+    # Linux (Streamlit Cloud)
+    # Ensure this filename matches EXACTLY what you upload to the bin/ folder
+    GODOT_BIN_NAME = "Godot_v4.4.1-stable_linux.x86_64" 
+
+GODOT_BIN = ROOT / "bin" / GODOT_BIN_NAME
 
 ENCODE_SCRIPT = ROOT / "gd_scripts" / "crits_single_encode.gd"
 FAVICON_PATH = ROOT / "assets" / "favicon.ico"
@@ -21,9 +29,12 @@ ELEMENT_ICON_BASE = "https://worldofmiscrits.com"
 SPRITE_CDN_BASE = "https://cdn.worldofmiscrits.com/miscrits"
 AVATAR_CDN_BASE = "https://cdn.worldofmiscrits.com/avatars"
 
-# Local Windows default miscrits.json path (where the game's cache is usually stored)
-# This resolves %USERPROFILE% correctly on Windows.
-MISCRITS_LOCAL_PATH = Path(os.path.expandvars(r"%USERPROFILE%\AppData\Roaming\Godot\app_userdata\Miscrits\image_cache\miscrits.json"))
+# Local miscrits.json path
+if system == "Windows":
+    MISCRITS_LOCAL_PATH = Path(os.path.expandvars(r"%USERPROFILE%\AppData\Roaming\Godot\app_userdata\Miscrits\image_cache\miscrits.json"))
+else:
+    # Linux fallback (e.g., for Streamlit Cloud or local Linux dev)
+    MISCRITS_LOCAL_PATH = Path.home() / ".local/share/godot/app_userdata/Miscrits/image_cache/miscrits.json"
 
 # UI Constants
 PAGE_SIZE = 16
