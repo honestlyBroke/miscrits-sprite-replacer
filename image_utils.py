@@ -92,10 +92,8 @@ def show_pil_via_file(
     caption: str = None,
     width: Union[int, Literal["stretch", "content"]] = "stretch",
 ) -> None:
-    """Save a PIL image to workdir and display it via file path"""
-    # OPTIMIZATION: Only save if file doesn't exist to reduce disk writes
     workdir.mkdir(parents=True, exist_ok=True)
     path = workdir / filename
 
     img.save(path)
-    st.image(img, caption=caption, width=width)
+    st.image(str(path), caption=caption, width=width)

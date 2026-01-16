@@ -45,6 +45,38 @@ def log_edit(miscrit_id: int, ability_id: int, field: str, old_value: str, new_v
     })
     st.session_state["unsaved_changes"] = True
 
+def move_ability(miscrit: Dict, ability_id: int, direction: str):
+    """
+    Reorder ability in the ability_order list.
+    Note: The UI displays the list in REVERSE order (Last Learned -> First Learned).
+    Therefore:
+      - Visual UP   = Moving towards the END of the actual list (Index + 1)
+      - Visual DOWN = Moving towards the START of the actual list (Index - 1)
+    """
+    order = miscrit.get("ability_order", [])
+    if not order:
+        return
+
+    try:
+        idx = order.index(ability_id)
+        
+        # Visual UP (Real Index + 1)
+        if direction == "up":
+            if idx < len(order) - 1:
+                order[idx], order[idx+1] = order[idx+1], order[idx]
+                st.session_state["unsaved_changes"] = True
+                st.rerun()
+                
+        # Visual DOWN (Real Index - 1)
+        elif direction == "down":
+            if idx > 0:
+                order[idx], order[idx-1] = order[idx-1], order[idx]
+                st.session_state["unsaved_changes"] = True
+                st.rerun()
+                
+    except ValueError:
+        pass
+
 def get_game_icon_name(ability: Dict) -> str:
     """
     Replicates the logic from models/Ability.gd get_icon() exactly.
@@ -168,23 +200,11 @@ def render_moves_editor():
     
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     
-    .stats-editor-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: 2px solid #5a67d8;
-        border-radius: 12px;
-        padding: 12px 24px;
-        font-weight: 700;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        margin: 20px 0;
-    }
-    
-    .stats-editor-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(102,126,234,0.4);
+    /* Reorder buttons styling */
+    .reorder-btn-container {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 5px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -243,8 +263,6 @@ def render_moves_editor():
     # --- 1. Miscrit Selector (Searchable Dropdown) ---
     st.markdown("### 1️⃣ Select Miscrit")
     
-    # Logic: Combine "ID", "First Name", and "Last Name" into one string
-    # This makes the standard Streamlit dropdown searchable by ANY of those terms.
     miscrit_options = []
     id_map = {}
     miscrits_sorted = sorted(miscrits, key=lambda x: x.get("id", 0))
@@ -252,12 +270,9 @@ def render_moves_editor():
     for m in miscrits_sorted:
         m_id = m.get("id", 0)
         name_list = m.get("names", [])
-        
         first_name = name_list[0] if name_list else m.get("name", "Unknown")
-        # Find the "Final" evolution name (last in the list)
         final_name = name_list[-1] if len(name_list) > 1 else ""
         
-        # Format: "1. Flue / Afterburn"
         if final_name:
             label = f"{m_id}. {first_name} / {final_name}"
         else:
@@ -266,7 +281,6 @@ def render_moves_editor():
         miscrit_options.append(label)
         id_map[label] = m
     
-    # Single unified search bar (The dropdown itself)
     selected_label = st.selectbox(
         "Search by ID, First Name, or Final Name...",
         miscrit_options,
@@ -282,8 +296,8 @@ def render_moves_editor():
     # --- 2. Edit Moves ---
     st.markdown("### 2️⃣ Edit Moves")
     st.caption(f"Editing moves for **{selected_label}** (Element: {selected_element})")
+    st.caption("ℹ️ Use ⬆️/⬇️ to reorder moves. Top moves appear last in game logic.")
     
-    # Unified UI Types List
     other_types = {
         ability["type"]
         for m in miscrits
@@ -292,12 +306,15 @@ def render_moves_editor():
     }
     ALL_UI_TYPES = sorted(list(set(STANDARD_ELEMENTS))) + sorted(list(other_types))
 
-    ability_order = list(reversed(selected.get("ability_order", [])))
+    # NOTE: We reverse the order for display (to match game "learned last" order),
+    # but the reorder logic handles the underlying list.
+    ability_order_list = selected.get("ability_order", [])
+    display_order = list(reversed(ability_order_list))
+    
     abilities_by_id = {a["id"]: a for a in selected.get("abilities", [])}
     
-    # Filter
     filtered_abilities = []
-    for ab_id in ability_order:
+    for ab_id in display_order:
         ability = abilities_by_id.get(ab_id)
         if ability:
             filtered_abilities.append((ab_id, ability))
@@ -308,6 +325,12 @@ def render_moves_editor():
     
     cols = st.columns(2)
     
+    # Calculate real indices for disable logic
+    # Real Last Index (Visually First)
+    real_last_idx = len(ability_order_list) - 1
+    # Real First Index (Visually Last)
+    real_first_idx = 0
+
     for idx, (ab_id, ability) in enumerate(filtered_abilities):
         col = cols[idx % 2]
         
@@ -324,6 +347,27 @@ def render_moves_editor():
                 current_ui_val = db_element if db_type == "Attack" else db_type
                 if current_ui_val not in ALL_UI_TYPES: current_ui_val = "Physical"
 
+                # --- REORDER BUTTONS ---
+                c_up, c_down, c_spacer = st.columns([0.15, 0.15, 0.7])
+                
+                # Logic: Find where this ID is in the REAL list
+                try:
+                    real_idx = ability_order_list.index(ab_id)
+                except ValueError:
+                    real_idx = -1
+                
+                # Visual UP = Real Index + 1 (Towards End)
+                # Disabled if already at the End (Visual Top)
+                with c_up:
+                    if st.button("⬆️", key=f"up_{ab_id}", disabled=(real_idx >= real_last_idx)):
+                        move_ability(selected, ab_id, "up")
+                
+                # Visual DOWN = Real Index - 1 (Towards Start)
+                # Disabled if already at Start (Visual Bottom)
+                with c_down:
+                    if st.button("⬇️", key=f"down_{ab_id}", disabled=(real_idx <= real_first_idx)):
+                        move_ability(selected, ab_id, "down")
+
                 # --- ICON PREVIEW ---
                 new_ui_sel = st.session_state.get(key_ui_type, current_ui_val)
                 temp_ability = ability.copy()
@@ -339,7 +383,7 @@ def render_moves_editor():
                 icon_name = get_game_icon_name(temp_ability)
                 icon_url = f"{TYPE_ICON_BASE}/{icon_name.lower()}.png"
 
-                # --- RENDER ---
+                # --- RENDER CARD ---
                 st.markdown(f"""
                 <div class="move-card-header-box">
                     <img src="{icon_url}" class="move-icon-img">
@@ -401,5 +445,4 @@ def render_moves_editor():
             st.success("Ready!")
         
         if st.session_state.get("_export_json"):
-            # Updated file_name to static 'miscrits.json'
-            st.download_button("⬇️ Download .json", data=st.session_state["_export_json"].encode("utf-8"), file_name="miscrits.json", mime="application/json", use_container_width=True)
+            st.download_button("⬇️ Download .json", data=st.session_state["_export_json"].encode("utf-8"), file_name=f"miscrits_{datetime.now().strftime('%Y%m%d')}.json", mime="application/json", use_container_width=True)
