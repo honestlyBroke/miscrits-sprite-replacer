@@ -24,7 +24,7 @@ FAVICON_PATH = ROOT / "assets" / "favicon.ico"
 BOSSES_CATALOG_PATH = ROOT / "assets" / "bosses.json"
 
 # CDN URLs
-MISCRITS_JSON_URL = "https://worldofmiscrits.com/miscrits.json"
+MISCRITS_JSON_URL = "https://cdn.worldofmiscrits.com/miscrits.json"
 ELEMENT_ICON_BASE = "https://worldofmiscrits.com"
 SPRITE_CDN_BASE = "https://cdn.worldofmiscrits.com/miscrits"
 AVATAR_CDN_BASE = "https://cdn.worldofmiscrits.com/avatars"
