@@ -10,7 +10,7 @@ from typing import List, Dict, Optional, Union
 from config import BOSSES_CATALOG_PATH, MISCRITS_JSON_URL, FETCH_TIMEOUT, MISCRITS_LOCAL_PATH
 
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=1800)
 def load_miscrits_from_api() -> List[Dict]:
     """
     Load miscrits.json from the API and process into evolution stages (existing behaviour).
