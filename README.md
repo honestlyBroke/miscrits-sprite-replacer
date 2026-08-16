@@ -43,7 +43,7 @@ pip install streamlit pillow requests
 ```
 
 
-3. **Godot Binary:** Ensure your Godot headless binary is located at `bin/Godot_v4.1-stable_linux.x86_64`.
+3. **Godot Binary:** Ensure your Godot headless binary is located at `bin/Godot_v4.4.1-stable_win64`.
 4. **Run the App:**
 ```bash
 streamlit run app.py
